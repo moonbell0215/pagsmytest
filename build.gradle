@@ -1,0 +1,40 @@
+plugins {
+        id 'org.springframework.boot' version '2.4.0'
+        id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+        id 'java'
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+}
+
+group = 'com.dht.pags.wallet'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven { url 'https://repo.spring.io/milestone' }
+    }
+    dependencies {
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    }
+    ext {
+        set('springCloudVersion', "2020.0.0-M6")
+    }
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        }
+    }
+    test {
+        useJUnitPlatform()
+    }
+}
+
+bootJar {
+    enabled = false
+}
