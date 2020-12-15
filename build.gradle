@@ -20,9 +20,6 @@ allprojects {
         maven { url 'https://repo.spring.io/milestone' }
     }
     dependencies {
-    	implementation 'org.springframework.boot:spring-boot-starter-web'
-  		implementation 'org.apache.kafka:kafka-streams'
-  		implementation 'org.springframework.kafka:spring-kafka'
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
     }
     ext {
