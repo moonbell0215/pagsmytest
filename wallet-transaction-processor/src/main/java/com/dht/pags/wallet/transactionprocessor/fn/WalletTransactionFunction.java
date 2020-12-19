@@ -11,10 +11,10 @@ import java.util.function.Function;
 public class WalletTransactionFunction {
 
     @Bean
-    public Function<Message, Message> uppercase() {
+    public Function<String, String> uppercase() {
         return value -> {
-            System.out.println("Received: " + value.getPayload());
-            return MessageBuilder.withPayload(value.getPayload().toString().toUpperCase()).build();
+            System.out.println("Received: " + value);
+            return value.toUpperCase();
         };
     }
 
