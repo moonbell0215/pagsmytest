@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MateralizedviewprocesorApplication {
+public class MaterializedViewProcessorApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MateralizedviewprocesorApplication.class, args);
+		SpringApplication.run(MaterializedViewProcessorApplication.class, args);
 	}
 
 }

@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Service
-public class WalletMateralizedViewProcessor {
+public class WalletMaterializedViewProcessor {
 
     @Bean
     public Consumer<String> walletTransactionToCosmoDbView() {
