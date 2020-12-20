@@ -1,1 +1,6 @@
-spring.cloud.stream.bindings.input.binder:kafka
+spring:
+  cloud:
+    stream:
+      binders:
+        placeTradeCommandHandler:
+
