@@ -1,6 +1,2 @@
-spring:
-  cloud:
-    stream:
-      binders:
-        placeTradeCommandHandler:
+
 
