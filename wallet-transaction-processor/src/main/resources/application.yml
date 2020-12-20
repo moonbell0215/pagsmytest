@@ -1,2 +1,6 @@
-
+spring:
+  cloud:
+    stream:
+      function:
+        definition: uppercase
 

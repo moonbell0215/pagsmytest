@@ -27,6 +27,16 @@
     1. 產生流水請求不接受記錄,寫到Kafka Topic Wallet.TradePlacedEvent。這是方便webservice-dispatcher。
 
 
+**Kafka Stream JSON DEMO**
+1. 啟動Start Kafka
+1. 啟動TransactionprocessorApplication
+1. 開個Terminal 跑 kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic uppercase-out-0 --property print.key=true --property key.separator="|"
+1. 開個Terminal 跑 kafka-console-producer.bat --bootstrap-server localhost:9092 --topic uppercase-in-0 --property parse.key=true --property key.separator="|"
+1. 在 kafka-console-producer.bat Terminal 輸入  123|{"key":123,"value":"apple"}
+
+
+
+
 **技術參考資料**
 * https://www.imooc.com/article/40858
 * https://cqrs.nu/Faq/commands-and-events
