@@ -3,10 +3,10 @@
 **這是**
 * Spring cloud stream專案
 * 實現資料轉化邏輯的地方
-* 負責把流水記錄,餘額記錄寫到Kafka 以外的Database,以方便查詢。暫只支援Azure CosmosDB 
+* 負責把交易記錄,餘額記錄寫到Kafka 以外的Database,以方便查詢。暫只支援Azure CosmosDB 
 
 **這不是**
-* 刪改流水記錄的專案
+* 刪改交易記錄的專案
 
 **使用的技術**
 * 使用Event Sourcing , 事件溯源設計模式中的materialized-view概念

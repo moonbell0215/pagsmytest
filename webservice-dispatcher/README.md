@@ -2,7 +2,7 @@
 
 **這是**
 * Web service專案
-* 負責把**要求寫流水請求**轉發到Kafka。它亦會監聽Kafka,把處理結果反回給Web service user。
+* 負責把**要求寫交易請求**轉發到Kafka。它亦會監聽Kafka,把處理結果反回給Web service user。
 
 **這不是**
 * 實現商業邏輯的地方

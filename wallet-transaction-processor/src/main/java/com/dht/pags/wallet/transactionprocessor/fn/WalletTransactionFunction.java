@@ -35,12 +35,12 @@ public class WalletTransactionFunction {
 
     private TransactionCreatedEvent createTransactionEvent(CreateTransactionCommand createTransactionCommand) {
         //TODO: Implement logic
-        return new TransactionCreatedEvent("1234",
-                100.0,
-                "wallet-1",
-                new Date(),
-                TransactionType.DEPOSIT,
-                "Testing"
+        return new TransactionCreatedEvent(createTransactionCommand.getTransactionId(),
+                createTransactionCommand.getTransactionAmount(),
+                createTransactionCommand.getWalletId(),
+                createTransactionCommand.getTransactionDateTime(),
+                createTransactionCommand.getTransactionType(),
+                "Note by event:" + createTransactionCommand.getDescription()
         );
     }
 

@@ -1,11 +1,19 @@
 spring:
   cloud:
     stream:
+      kafka:
+        streams:
+          binder:
+            deserialization-exception-handler: logandcontinue
       function:
-        definition: uppercase;createTransactionCommandHandler
+        definition: createTransactionCommandHandler
       bindings:
         createTransactionCommandHandler-in-0:
           destination: wallet.createTransactionCommand
+          consumer:
+            nativeDecoding: false
         createTransactionCommandHandler-out-0:
           destination: wallet.transactionCreatedEvent
+          consumer:
+            nativeDecoding: false
 
