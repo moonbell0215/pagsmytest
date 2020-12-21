@@ -16,4 +16,3 @@ spring:
           destination: wallet.transactionCreatedEvent
           consumer:
             nativeDecoding: false
-
