@@ -1,17 +1,13 @@
 package com.dht.pags.wallet.transactionprocessor.fn;
 
+import com.dht.pags.wallet.transactionprocessor.domain.CreateTransactionCommand;
+import com.dht.pags.wallet.transactionprocessor.domain.TransactionCreatedEvent;
+import com.dht.pags.wallet.transactionprocessor.domain.TransactionType;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.Materialized;
-import org.apache.kafka.streams.kstream.TimeWindows;
-import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.context.annotation.Bean;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -19,14 +15,33 @@ import java.util.function.Function;
 public class WalletTransactionFunction {
 
     @Bean
-    public Function<String, String> placeTradeCommandHandler() {
-        return value -> {
-            System.out.println("Order      Received: " + value);
-            return value.toUpperCase();
-        };
+    public Function<KStream<String, CreateTransactionCommand>, KStream<String, TransactionCreatedEvent>> createTransactionCommandHandler() {
+        return input -> input
+                .map((key, createTransactionCommand) -> new KeyValue(key, validateAndCreateTransactionCreatedEvent(createTransactionCommand)));
     }
 
+    private TransactionCreatedEvent validateAndCreateTransactionCreatedEvent(CreateTransactionCommand createTransactionCommand) {
+        if (this.validateCreateTransactionCommand(createTransactionCommand)) {
+            return createTransactionEvent(createTransactionCommand);
+        }
+        //TODO : Return error
+        return null;
+    }
 
+    private boolean validateCreateTransactionCommand(CreateTransactionCommand createTransactionCommand) {
+        //TODO: Implement validation logic
+        return true;
+    }
 
+    private TransactionCreatedEvent createTransactionEvent(CreateTransactionCommand createTransactionCommand) {
+        //TODO: Implement logic
+        return new TransactionCreatedEvent("1234",
+                100.0,
+                "wallet-1",
+                new Date(),
+                TransactionType.DEPOSIT,
+                "Testing"
+        );
+    }
 
 }

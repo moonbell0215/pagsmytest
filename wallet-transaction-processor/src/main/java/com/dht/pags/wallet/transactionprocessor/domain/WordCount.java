@@ -1,4 +1,4 @@
-package com.dht.pags.wallet.transactionprocessor;
+package com.dht.pags.wallet.transactionprocessor.domain;
 
 import java.util.Date;
 

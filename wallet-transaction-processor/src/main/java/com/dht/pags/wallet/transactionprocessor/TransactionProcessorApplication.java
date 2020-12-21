@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TransactionprocessorApplication {
+public class TransactionProcessorApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TransactionprocessorApplication.class, args);
+		SpringApplication.run(TransactionProcessorApplication.class, args);
 	}
 
 }

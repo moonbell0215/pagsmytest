@@ -2,5 +2,10 @@ spring:
   cloud:
     stream:
       function:
-        definition: uppercase
+        definition: uppercase;createTransactionCommandHandler
+      bindings:
+        createTransactionCommandHandler-in-0:
+          destination: wallet.createTransactionCommand
+        createTransactionCommandHandler-out-0:
+          destination: wallet.transactionCreatedEvent
 
