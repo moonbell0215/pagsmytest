@@ -1,1 +1,15 @@
+spring:
+  cloud:
+    stream:
+      kafka:
+        streams:
+          binder:
+            deserialization-exception-handler: logandcontinue
+      function:
+        definition: walletTransactionToCosmoDbView
+      bindings:
+        walletTransactionToCosmoDbView-in-0:
+          destination: wallet.transactionCreatedEvent
+          consumer:
+            nativeDecoding: false
 
