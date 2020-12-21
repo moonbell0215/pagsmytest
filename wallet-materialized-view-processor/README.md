@@ -17,6 +17,7 @@
 
 
 **技術參考資料**
+* https://dev.to/azure/going-full-reactive-with-spring-webflux-and-the-new-cosmosdb-api-v3-1n2a
 * https://www.imooc.com/article/40858
 * https://cqrs.nu/Faq/commands-and-events
 * https://kafka.apache.org/26/documentation/streams/developer-guide/
