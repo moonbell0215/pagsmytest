@@ -1,6 +1,7 @@
-package com.dht.pags.wallet.materalizedviewprocesor;
+package com.dht.pags.wallet.materalizedviewprocesor.fn;
 
 import com.azure.data.cosmos.CosmosItemResponse;
+import com.dht.pags.wallet.domain.TransactionCreatedEvent;
 import com.dht.pags.wallet.materalizedviewprocesor.repository.MaterializedViewUpdateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ public class WalletMaterializedViewProcessor {
     private MaterializedViewUpdateService materializedViewUpdateService;
 
     @Bean
-    public Consumer<MaterializedViewUpdateService> walletTransactionToCosmoDbView() {
+    public Consumer<TransactionCreatedEvent> walletTransactionToCosmoDbView() {
         return transactionCreatedEvent -> {
             LOGGER.info("Received: " + transactionCreatedEvent);
             Mono<CosmosItemResponse> cosmosItemResponseMono = materializedViewUpdateService.createItem(transactionCreatedEvent);

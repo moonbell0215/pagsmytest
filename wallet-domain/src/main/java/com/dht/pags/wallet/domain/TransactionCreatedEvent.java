@@ -32,6 +32,10 @@ public class TransactionCreatedEvent {
         return transactionId;
     }
 
+    public String getId() {
+        return transactionId;
+    }
+
     public double getTransactionAmount() {
         return transactionAmount;
     }
