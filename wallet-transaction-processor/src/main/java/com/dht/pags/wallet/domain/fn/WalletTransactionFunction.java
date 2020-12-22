@@ -1,14 +1,12 @@
-package com.dht.pags.wallet.transactionprocessor.fn;
+package com.dht.pags.wallet.domain.fn;
 
-import com.dht.pags.wallet.transactionprocessor.domain.CreateTransactionCommand;
-import com.dht.pags.wallet.transactionprocessor.domain.TransactionCreatedEvent;
-import com.dht.pags.wallet.transactionprocessor.domain.TransactionType;
+import com.dht.pags.wallet.domain.CreateTransactionCommand;
+import com.dht.pags.wallet.domain.TransactionCreatedEvent;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.KStream;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.function.Function;
 
 @Service

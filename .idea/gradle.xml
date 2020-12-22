@@ -9,6 +9,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/wallet-domain" />
             <option value="$PROJECT_DIR$/wallet-materialized-view-processor" />
             <option value="$PROJECT_DIR$/wallet-transaction-processor" />
             <option value="$PROJECT_DIR$/webservice-dispatcher" />

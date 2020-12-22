@@ -1,6 +1,6 @@
-package com.dht.pags.wallet.transactionprocessor.fn;
+package com.dht.pags.wallet.domain.fn;
 
-import com.dht.pags.wallet.transactionprocessor.domain.WordCount;
+import com.dht.pags.wallet.domain.WordCount;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.KStream;
 import org.springframework.context.annotation.Bean;

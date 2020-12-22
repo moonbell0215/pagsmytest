@@ -1,6 +1,4 @@
-package com.dht.pags.wallet.transactionprocessor.domain;
-
-import java.util.Date;
+package com.dht.pags.wallet.domain;
 
 public class WordCount {
     private Long key;

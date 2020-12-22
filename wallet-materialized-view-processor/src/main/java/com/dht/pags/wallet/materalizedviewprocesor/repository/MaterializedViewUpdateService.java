@@ -1,7 +1,7 @@
 package com.dht.pags.wallet.materalizedviewprocesor.repository;
 
 import com.azure.data.cosmos.*;
-import com.dht.pags.wallet.materalizedviewprocesor.domain.Balance;
+import com.dht.pags.wallet.domain.TransactionCreatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,7 +10,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.PostConstruct;
-import java.util.UUID;
 
 @Service
 public class MaterializedViewUpdateService {
@@ -18,7 +17,7 @@ public class MaterializedViewUpdateService {
     @Value("${application.cosmosdb.accountHost}")
     private String databaseName;
 
-    @Value("${application.cosmosdb.container")
+    @Value("${application.cosmosdb.container}")
     private String containerName;
 
     private final Logger log = LoggerFactory.getLogger(MaterializedViewUpdateService.class);
@@ -70,27 +69,7 @@ public class MaterializedViewUpdateService {
 
     }
 
-    public Mono<Balance> save(TransactionCreatedEvent balance) {
-        balance.setId(UUID.randomUUID().toString());
-        return container.createItem(balance)
-                .map(i -> {
-                    balance.setEmployeecode("test123");
-                    balance.setUpdatetime("20201223120000");
-                    balance.setBalance(100.0);
-                    //balance.setName(i.properties().getString("name"));
-                    return balance;
-                });
-    }
-
-    public Mono<Balance> findById(String employeecode) {
-        return container.getItem(employeecode, employeecode).read().map(i -> {
-            Balance balance = new Balance();
-            balance.setEmployeecode(employeecode);
-            balance.setUpdatetime(i.properties().getString("updatetime"));
-            balance.setBalance(i.properties().getDouble("balance"));
-            //balance.setId(i.item().id());
-            //balance.setName(i.properties().getString("name"));
-            return balance;
-        });
+    public Mono<CosmosItemResponse> createItem(Object event) {
+        return container.createItem(event);
     }
 }

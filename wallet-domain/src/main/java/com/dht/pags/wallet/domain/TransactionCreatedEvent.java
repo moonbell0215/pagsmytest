@@ -1,4 +1,4 @@
-package com.dht.pags.wallet.transactionprocessor.domain;
+package com.dht.pags.wallet.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
