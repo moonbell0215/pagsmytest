@@ -1,13 +1,12 @@
 package com.dht.pags.wallet.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
 
 public class TransactionCreatedEvent {
-    private final String transactionId;
+    private final String id;
     private final double transactionAmount;
     private final String walletId;
     private final Date transactionDateTime;
@@ -15,13 +14,13 @@ public class TransactionCreatedEvent {
     private final String description;
 
     @JsonCreator
-    public TransactionCreatedEvent(@JsonProperty("transactionId") String transactionId,
+    public TransactionCreatedEvent(@JsonProperty("id") String id,
                                    @JsonProperty("transactionAmount") double transactionAmount,
                                    @JsonProperty("walletId") String walletId,
                                    @JsonProperty("transactionDateTime") Date transactionDateTime,
                                    @JsonProperty("transactionType") TransactionType transactionType,
                                    @JsonProperty("description") String description) {
-        this.transactionId = transactionId;
+        this.id = id;
         this.transactionAmount = transactionAmount;
         this.walletId = walletId;
         this.transactionDateTime = transactionDateTime;
@@ -29,14 +28,8 @@ public class TransactionCreatedEvent {
         this.description = description;
     }
 
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    @JsonProperty("id")
-    @JsonIgnore
     public String getId() {
-        return transactionId;
+        return id;
     }
 
     public double getTransactionAmount() {
