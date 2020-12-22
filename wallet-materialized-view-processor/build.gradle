@@ -7,4 +7,6 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation group : 'org.springframework.cloud', name: 'spring-cloud-stream', classifier: 'test-binder'
 	implementation 'com.microsoft.azure:azure-cosmos:3.7.5'
+	implementation "io.projectreactor.netty:reactor-netty:0.9.7.RELEASE"
+	implementation "io.projectreactor:reactor-core:3.3.5.RELEASE"
 }

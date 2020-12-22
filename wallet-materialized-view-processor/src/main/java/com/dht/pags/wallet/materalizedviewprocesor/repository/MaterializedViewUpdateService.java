@@ -14,7 +14,7 @@ import javax.annotation.PostConstruct;
 @Service
 public class MaterializedViewUpdateService {
 
-    @Value("${application.cosmosdb.accountHost}")
+    @Value("${application.cosmosdb.database}")
     private String databaseName;
 
     @Value("${application.cosmosdb.container}")
