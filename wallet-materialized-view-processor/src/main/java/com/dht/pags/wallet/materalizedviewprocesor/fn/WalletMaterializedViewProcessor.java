@@ -24,8 +24,8 @@ public class WalletMaterializedViewProcessor {
     public Consumer<TransactionCreatedEvent> walletTransactionToCosmoDbView() {
         return transactionCreatedEvent -> {
             LOGGER.info("Received: " + transactionCreatedEvent);
-            Mono<CosmosItemResponse> cosmosItemResponseMono = materializedViewUpdateService.createItem(transactionCreatedEvent);
-            cosmosItemResponseMono.log();
+            CosmosItemResponse cosmosItemResponseMono = materializedViewUpdateService.createItem(transactionCreatedEvent);
+            LOGGER.info("Saved: " + cosmosItemResponseMono.toString());
         };
     }
 

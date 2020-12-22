@@ -49,7 +49,7 @@ public class MaterializedViewUpdateService {
         client.createDatabaseIfNotExists(databaseName)
                 .doOnSuccess(cosmosDatabaseResponse -> log.info("Database: " + cosmosDatabaseResponse.database().id()))
                 .doOnError(throwable -> log.error(throwable.getMessage()))
-                .publishOn(Schedulers.elastic())
+                .publishOn(Schedulers.parallel())
                 .block();
 
         database = client.getDatabase(databaseName);
@@ -62,14 +62,14 @@ public class MaterializedViewUpdateService {
         database.createContainerIfNotExists(containerSettings, 400)
                 .doOnSuccess(cosmosContainerResponse -> log.info("Container: " + cosmosContainerResponse.container().id()))
                 .doOnError(throwable -> log.error(throwable.getMessage()))
-                .publishOn(Schedulers.elastic())
+                .publishOn(Schedulers.parallel())
                 .block();
 
         container = database.getContainer(containerName);
 
     }
 
-    public Mono<CosmosItemResponse> createItem(Object event) {
-        return container.createItem(event);
+    public CosmosItemResponse createItem(Object event) {
+        return container.createItem(event).block();
     }
 }

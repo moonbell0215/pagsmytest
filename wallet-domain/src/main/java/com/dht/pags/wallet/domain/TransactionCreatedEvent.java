@@ -1,6 +1,7 @@
 package com.dht.pags.wallet.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
@@ -32,6 +33,8 @@ public class TransactionCreatedEvent {
         return transactionId;
     }
 
+    @JsonProperty("id")
+    @JsonIgnore
     public String getId() {
         return transactionId;
     }
