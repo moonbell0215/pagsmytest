@@ -17,14 +17,14 @@
 * Kafka
 
 **流程**
-1. WalletTransactionFunction.processPlaceTradeCommand() 從Kafka Topic Wallet.PlaceTradeCommand 拿到請求
+1. WalletTransactionFunction.createTransactionCommandHandler() 從Kafka Topic Wallet.CreateTransactionCommand 拿到請求
 1. processPlaceTradeCommand() 實現商業邏輯,先validate 要不要接受這個請求。
 1. 假如接受
-    1. 產生交易記錄, 寫到Kafka Topic Wallet.TradeBookedEvent
-    1. 產生交易請求接受記錄,寫到Kafka Topic Wallet.TransactionCreatedEvent。這是方便webservice-dispatcher。
+    1. 產生交易記錄, 寫到Kafka Topic Wallet.TransactionCreatedEvent
+    1. 產生交易請求接受記錄,寫到Kafka Topic Wallet.CreateTransactionCommandProcessedEvent。這是方便webservice-dispatcher。
     1. 計算好各種各樣的餘額記錄,寫到Kafka Topic Wallet.BalanceUpdatedEvent。這是方便wallet-materialized-view-processor。
 1. 假如不接受
-    1. 產生流水請求不接受記錄,寫到Kafka Topic Wallet.TradePlacedEvent。這是方便webservice-dispatcher。
+    1. 產生流水請求不接受記錄,寫到Kafka Topic Wallet.CreateTransactionCommandProcessedEvent。這是方便webservice-dispatcher。
 
 
 **Kafka Stream JSON DEMO**
