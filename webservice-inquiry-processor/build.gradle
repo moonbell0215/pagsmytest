@@ -13,9 +13,10 @@ ext {
 
 
 dependencies {
+	implementation project(':wallet-domain')
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'com.microsoft.azure:azure-cosmos:3.7.5'
+	implementation group: 'com.azure', name: 'azure-cosmos', version: '4.10.0'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}

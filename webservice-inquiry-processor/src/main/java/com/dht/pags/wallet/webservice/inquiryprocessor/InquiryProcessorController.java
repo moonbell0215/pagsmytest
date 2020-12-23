@@ -1,6 +1,9 @@
 package com.dht.pags.wallet.webservice.inquiryprocessor;
 
-import com.azure.data.cosmos.*;
+import com.azure.cosmos.*;
+import com.azure.cosmos.models.CosmosContainerProperties;
+import com.azure.cosmos.models.CosmosQueryRequestOptions;
+import com.dht.pags.wallet.domain.TransactionCreatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,9 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
-import reactor.core.scheduler.Schedulers;
 
 import javax.annotation.PostConstruct;
+import java.util.Collections;
 
 @Service
 @RestController
@@ -22,7 +25,7 @@ public class InquiryProcessorController {
     private String databaseName;
 
     @Value("${application.cosmosdb.container}")
-    private String containerName;
+    private String containerId;
 
     private final Logger log = LoggerFactory.getLogger(InquiryProcessorController.class);
 
@@ -32,49 +35,53 @@ public class InquiryProcessorController {
     @Value("${application.cosmosdb.accountKey}")
     private String accountKey;
 
-    private CosmosClient client;
-    private CosmosDatabase database;
-    private CosmosContainer container;
+    private CosmosAsyncClient cosmosClient;
+    private CosmosAsyncDatabase cosmosDatabase;
+    private CosmosAsyncContainer cosmosContainer;
 
     @PostConstruct
     public void init() {
-        log.info("Configuring CosmosDB connection");
-
-        ConnectionPolicy connectionPolicy = new ConnectionPolicy();
-        connectionPolicy.connectionMode(ConnectionMode.DIRECT);
-
-        client = CosmosClient.builder()
-                .endpoint(accountHost)
-                .key(accountKey)
-                .connectionPolicy(connectionPolicy)
-                .build();
-
-        // Create the database if it does not exist yet
-        client.createDatabaseIfNotExists(databaseName)
-                .doOnSuccess(cosmosDatabaseResponse -> log.info("Database: " + cosmosDatabaseResponse.database().id()))
-                .doOnError(throwable -> log.error(throwable.getMessage()))
-                .publishOn(Schedulers.parallel())
-                .block();
-
-        database = client.getDatabase(databaseName);
-
-        // Create the container if it does not exist yet
-        CosmosContainerProperties containerSettings = new CosmosContainerProperties(containerName, "/id");
-        IndexingPolicy indexingPolicy = new IndexingPolicy();
-        indexingPolicy.automatic(false);
-        containerSettings.indexingPolicy(indexingPolicy);
-        database.createContainerIfNotExists(containerSettings, 400)
-                .doOnSuccess(cosmosContainerResponse -> log.info("Container: " + cosmosContainerResponse.container().id()))
-                .doOnError(throwable -> log.error(throwable.getMessage()))
-                .publishOn(Schedulers.parallel())
-                .block();
-
-        container = database.getContainer(containerName);
-
+        this.getContainerCreateResourcesIfNotExist();
     }
 
+    private CosmosAsyncContainer getContainerCreateResourcesIfNotExist() {
+        log.info("Configuring CosmosDB connection");
+        cosmosClient = new CosmosClientBuilder()
+                .endpoint(accountHost)
+                .key(accountKey)
+                //  Setting the preferred location to Cosmos DB Account region
+                //  West US is just an example. User should set preferred location to the Cosmos DB region closest to the application
+                .preferredRegions(Collections.singletonList("Japan East"))
+                .consistencyLevel(ConsistencyLevel.EVENTUAL)
+                //  Setting content response on write enabled, which enables the SDK to return response on write operations.
+                .contentResponseOnWriteEnabled(true)
+                .buildAsyncClient();
+
+        if (cosmosDatabase == null) {
+            cosmosClient.createDatabaseIfNotExists(databaseName);
+            cosmosDatabase = cosmosClient.getDatabase(databaseName);
+        }
+
+        if (cosmosContainer == null) {
+            CosmosContainerProperties properties = new CosmosContainerProperties(containerId, "/walletId");
+            cosmosDatabase.createContainerIfNotExists(properties);
+            cosmosContainer = cosmosDatabase.getContainer(containerId);
+        }
+
+        return cosmosContainer;
+    }
+
+
     @GetMapping("/")
-    public Flux<FeedResponse<CosmosItemProperties>> getAllItems() {
-        return container.queryItems("Select * from c");
+    public Flux<TransactionCreatedEvent> getAllItems() {
+        int maxDegreeOfParallelism = 1000;
+        int maxBufferedItemCount = 100;
+
+        CosmosQueryRequestOptions options = new CosmosQueryRequestOptions();
+        options.setQueryMetricsEnabled(false);
+        options.setMaxBufferedItemCount(maxBufferedItemCount);
+        options.setMaxDegreeOfParallelism(maxDegreeOfParallelism);
+
+        return cosmosContainer.queryItems("Select * from c", options, TransactionCreatedEvent.class);
     }
 }

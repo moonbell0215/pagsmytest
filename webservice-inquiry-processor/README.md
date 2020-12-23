@@ -17,5 +17,6 @@
 
 **技術參考資料**
 * https://docs.microsoft.com/zh-tw/azure/cosmos-db/sql-api-java-application
+* https://github.com/Azure-Samples/azure-cosmos-java-getting-started
 * https://dev.to/azure/going-full-reactive-with-spring-webflux-and-the-new-cosmosdb-api-v3-1n2a
 * https://docs.microsoft.com/zh-tw/azure/cosmos-db/introduction
