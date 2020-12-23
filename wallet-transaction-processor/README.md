@@ -36,7 +36,7 @@
 * "tran-1"|{"transactionId":"tran-1","transactionAmount":10.1,"walletId":"wallet-1","transactionDateTime":"","transactionType":"DEPOSIT","description":"test"}
 * "tran-2"|{"transactionId":"tran-2","transactionAmount":10.1,"walletId":"wallet-1","transactionDateTime":"","transactionType":"DEPOSIT","description":"test"}
 * "tran-3"|{"transactionId":"tran-3","transactionAmount":10.1,"walletId":"wallet-2","transactionDateTime":"","transactionType":"DEPOSIT","description":"test"}
-1. 假如wallet-materialized-view-processor 也在跑,在Cosmo DB會看到三條記錄。
+1. 假如wallet-materialized-view-processor 也在跑,在Cosmo DB會看到三條記錄。transactionId 是唯一鍵,插入不成功,換個transactionId 
 
 
 
