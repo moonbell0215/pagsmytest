@@ -74,14 +74,6 @@ public class InquiryProcessorController {
 
     @GetMapping("/")
     public Flux<TransactionCreatedEvent> getAllItems() {
-        int maxDegreeOfParallelism = 1000;
-        int maxBufferedItemCount = 100;
-
-        CosmosQueryRequestOptions options = new CosmosQueryRequestOptions();
-        options.setQueryMetricsEnabled(false);
-        options.setMaxBufferedItemCount(maxBufferedItemCount);
-        options.setMaxDegreeOfParallelism(maxDegreeOfParallelism);
-
-        return cosmosContainer.queryItems("Select * from c", options, TransactionCreatedEvent.class);
+        return cosmosContainer.queryItems("Select * from c", new CosmosQueryRequestOptions(), TransactionCreatedEvent.class);
     }
 }
