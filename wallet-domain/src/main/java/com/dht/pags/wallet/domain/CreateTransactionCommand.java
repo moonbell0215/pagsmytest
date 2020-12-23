@@ -1,6 +1,7 @@
 package com.dht.pags.wallet.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
@@ -9,12 +10,13 @@ public class CreateTransactionCommand {
     private final String transactionId;
     private final double transactionAmount;
     private final String walletId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private final Date transactionDateTime;
     private final TransactionType transactionType;
     private final String description;
 
     @JsonCreator
-    public CreateTransactionCommand(@JsonProperty("transactionId")String transactionId,
+    public CreateTransactionCommand(@JsonProperty("transactionId") String transactionId,
                                     @JsonProperty("transactionAmount") double transactionAmount,
                                     @JsonProperty("walletId") String walletId,
                                     @JsonProperty("transactionDateTime") Date transactionDateTime,
@@ -50,5 +52,17 @@ public class CreateTransactionCommand {
 
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public String toString() {
+        return "CreateTransactionCommand{" +
+                "transactionId='" + transactionId + '\'' +
+                ", transactionAmount=" + transactionAmount +
+                ", walletId='" + walletId + '\'' +
+                ", transactionDateTime=" + transactionDateTime +
+                ", transactionType=" + transactionType +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

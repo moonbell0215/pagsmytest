@@ -3,10 +3,10 @@ package com.dht.pags.webservice.dispatcher.controller;
 import com.dht.pags.wallet.domain.CreateTransactionCommand;
 import com.dht.pags.wallet.domain.TransactionCreatedEvent;
 import com.dht.pags.webservice.dispatcher.model.Wallet;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -60,12 +60,14 @@ public class WalletController {
     @PostMapping(path = "/Increase", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ReceiverRecord<Object, TransactionCreatedEvent>> increase(@RequestBody CreateTransactionCommand command) {
         try {
+            System.out.println("Request is coming \n" + command);
             final String transactionIdFromCommand = command.getTransactionId();
             SenderRecord<String, String, Integer> message = SenderRecord.create(new ProducerRecord<>(TOPIC_SEND, objectMapper.writeValueAsString(command)), 1);
             kafkaSender.send(Mono.just(message));
             Flux<ReceiverRecord<Object, TransactionCreatedEvent>> transactionCreatedEventFlux = kafkaReceiver.receive();
+            // TODO 下面这一步会报错
             return transactionCreatedEventFlux.filter(x -> x.value().getId().equals(transactionIdFromCommand)).next();
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return Mono.error(e);
         }

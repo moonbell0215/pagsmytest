@@ -47,27 +47,27 @@ public class WebController {
         final SenderOptions<String, String> producerOptions = SenderOptions.create(producerProps);
         kafkaProducer = KafkaSender.create(producerOptions);
 
-        final Map<String, TransactionCreatedEvent> consumerProps = new HashMap<>();
-        consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        consumerProps.put(ConsumerConfig.CLIENT_ID_CONFIG, UUID.randomUUID().toString());
-        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "webservice-dispatcher");
-        consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        ReceiverOptions<String, TransactionCreatedEvent> consumerOptions = ReceiverOptions.create(consumerProps)
-                .subscription(Collections.singleton("wallet.transactionCreatedEvent"));
-        transactionCreatedEventFlux = KafkaReceiver.create(consumerOptions).receive();
+//        final Map<String, TransactionCreatedEvent> consumerProps = new HashMap<>();
+//        consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+//        consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+//        consumerProps.put(ConsumerConfig.CLIENT_ID_CONFIG, UUID.randomUUID().toString());
+//        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, "webservice-dispatcher");
+//        consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+//        ReceiverOptions<String, TransactionCreatedEvent> consumerOptions = ReceiverOptions.create(consumerProps)
+//                .subscription(Collections.singleton("wallet.transactionCreatedEvent"));
+//        transactionCreatedEventFlux = KafkaReceiver.create(consumerOptions).receive();
 
         objectMapper = new ObjectMapper();
     }
 
-    @PostMapping(value = "/transaction")
-    public Mono<TransactionCreatedEvent> doTransaction(@RequestBody CreateTransactionCommand command) throws JsonProcessingException {
-        final String transactionIdFromCommand = command.getTransactionId();
-        SenderRecord<String, String, Integer> message = SenderRecord.create
-                (new ProducerRecord<>("wallet.createTransactionCommand", objectMapper.writeValueAsString(command)), 1);
-        kafkaProducer.send(Mono.just(message));
-        Mono<ReceiverRecord<String, TransactionCreatedEvent>> mono = transactionCreatedEventFlux.filter(x -> x.value().getId().equals(transactionIdFromCommand)).next();
-        return mono;
-    }
+//    @PostMapping(value = "/transaction")
+//    public Mono<TransactionCreatedEvent> doTransaction(@RequestBody CreateTransactionCommand command) throws JsonProcessingException {
+//        final String transactionIdFromCommand = command.getTransactionId();
+//        SenderRecord<String, String, Integer> message = SenderRecord.create
+//                (new ProducerRecord<>("wallet.createTransactionCommand", objectMapper.writeValueAsString(command)), 1);
+//        kafkaProducer.send(Mono.just(message));
+//        Mono<ReceiverRecord<String, TransactionCreatedEvent>> mono = transactionCreatedEventFlux.filter(x -> x.value().getId().equals(transactionIdFromCommand)).next();
+//        return mono;
+//    }
 
 }
