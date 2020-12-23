@@ -1,11 +1,15 @@
 plugins {
-    id 'org.springframework.boot' version '2.4.0'
-    id 'java'
+	id 'org.springframework.boot' version '2.3.7.RELEASE'
+	id 'java'
 }
 
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+
+ext {
+    set('springCloudVersion', "Hoxton.SR9")
+}
 
 dependencies {
     implementation project(':wallet-domain')
@@ -14,8 +18,16 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation group: 'org.springframework.cloud', name: 'spring-cloud-stream', classifier: 'test-binder'
-    implementation 'com.microsoft.azure:azure-cosmos:3.7.5'
-    implementation "io.projectreactor.netty:reactor-netty:0.9.7.RELEASE"
-    implementation "io.projectreactor:reactor-core:3.3.5.RELEASE"
+    implementation group : 'org.springframework.cloud', name: 'spring-cloud-stream', classifier: 'test-binder'
+    implementation 'com.azure:azure-cosmos:4.10.0'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+test {
+    useJUnitPlatform()
 }

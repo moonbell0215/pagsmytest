@@ -1,6 +1,5 @@
 package com.dht.pags.wallet.materalizedviewprocesor.fn;
 
-import com.azure.data.cosmos.CosmosItemResponse;
 import com.dht.pags.wallet.domain.TransactionCreatedEvent;
 import com.dht.pags.wallet.materalizedviewprocesor.repository.MaterializedViewUpdateService;
 import org.slf4j.Logger;
@@ -8,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 import java.util.function.Consumer;
 
@@ -24,8 +22,7 @@ public class WalletMaterializedViewProcessor {
     public Consumer<TransactionCreatedEvent> walletTransactionToCosmoDbView() {
         return transactionCreatedEvent -> {
             LOGGER.info("Received: " + transactionCreatedEvent);
-            CosmosItemResponse cosmosItemResponseMono = materializedViewUpdateService.createItem(transactionCreatedEvent);
-            LOGGER.info("Saved: " + cosmosItemResponseMono.toString());
+            materializedViewUpdateService.createItem(transactionCreatedEvent).log().subscribe();
         };
     }
 
