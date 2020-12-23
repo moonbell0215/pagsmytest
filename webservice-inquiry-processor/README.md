@@ -12,9 +12,10 @@
 
 **使用的技術**
 * Spring Web Flex
-* Azure CosmosDB SDK 3.0
+* Azure CosmosDB SDK 4.0
 * CosmosDB
 
 **技術參考資料**
+* https://docs.microsoft.com/zh-tw/azure/cosmos-db/sql-api-java-application
 * https://dev.to/azure/going-full-reactive-with-spring-webflux-and-the-new-cosmosdb-api-v3-1n2a
 * https://docs.microsoft.com/zh-tw/azure/cosmos-db/introduction
