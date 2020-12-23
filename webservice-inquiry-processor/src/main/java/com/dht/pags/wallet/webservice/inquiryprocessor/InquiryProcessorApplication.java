@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class InquiryprocessorApplication {
+public class InquiryProcessorApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(InquiryprocessorApplication.class, args);
+		SpringApplication.run(InquiryProcessorApplication.class, args);
 	}
 
 }
