@@ -30,3 +30,7 @@ dependencyManagement {
 test {
 	useJUnitPlatform()
 }
+
+bootBuildImage {
+	imageName = "dht/pags/wallet-transaction-processor"
+}
