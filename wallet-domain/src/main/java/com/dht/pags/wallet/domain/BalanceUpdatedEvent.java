@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
 
-public class TransactionCreatedEvent {
+public class BalanceUpdatedEvent {
     private final String id;
     private final double transactionAmount;
     private final String walletId;
@@ -16,12 +16,12 @@ public class TransactionCreatedEvent {
     private final String description;
 
     @JsonCreator
-    public TransactionCreatedEvent(@JsonProperty("id") String id,
-                                   @JsonProperty("transactionAmount") double transactionAmount,
-                                   @JsonProperty("walletId") String walletId,
-                                   @JsonProperty("transactionDateTime") Date transactionDateTime,
-                                   @JsonProperty("transactionType") TransactionType transactionType,
-                                   @JsonProperty("description") String description) {
+    public BalanceUpdatedEvent(@JsonProperty("id") String id,
+                               @JsonProperty("transactionAmount") double transactionAmount,
+                               @JsonProperty("walletId") String walletId,
+                               @JsonProperty("transactionDateTime") Date transactionDateTime,
+                               @JsonProperty("transactionType") TransactionType transactionType,
+                               @JsonProperty("description") String description) {
         this.id = id;
         this.transactionAmount = transactionAmount;
         this.walletId = walletId;
@@ -56,7 +56,7 @@ public class TransactionCreatedEvent {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("TransactionCreatedEvent{");
+        final StringBuffer sb = new StringBuffer("BalanceUpdatedEvent{");
         sb.append("id='").append(id).append('\'');
         sb.append(", transactionAmount=").append(transactionAmount);
         sb.append(", walletId='").append(walletId).append('\'');
