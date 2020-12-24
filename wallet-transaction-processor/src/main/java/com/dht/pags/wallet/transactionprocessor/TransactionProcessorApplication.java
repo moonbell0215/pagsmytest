@@ -1,4 +1,4 @@
-package com.dht.pags.wallet.domain;
+package com.dht.pags.wallet.transactionprocessor;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

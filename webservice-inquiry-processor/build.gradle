@@ -29,3 +29,10 @@ dependencyManagement {
 		mavenBom "com.microsoft.azure:azure-spring-boot-bom:${azureVersion}"
 	}
 }
+
+tasks.build.doLast() {
+	copy {
+		from zipTree("${buildDir}/libs/${project.name}.jar")
+		into("build/dependency")
+	}
+}

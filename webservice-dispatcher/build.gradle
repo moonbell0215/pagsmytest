@@ -17,3 +17,10 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
 }
+
+tasks.build.doLast() {
+	copy {
+		from zipTree("${buildDir}/libs/${project.name}.jar")
+		into("build/dependency")
+	}
+}

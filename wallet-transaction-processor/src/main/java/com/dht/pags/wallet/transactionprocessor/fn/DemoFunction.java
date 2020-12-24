@@ -1,4 +1,4 @@
-package com.dht.pags.wallet.domain.fn;
+package com.dht.pags.wallet.transactionprocessor.fn;
 
 import com.dht.pags.wallet.domain.WordCount;
 import org.apache.kafka.streams.KeyValue;

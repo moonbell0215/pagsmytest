@@ -31,6 +31,9 @@ test {
 	useJUnitPlatform()
 }
 
-bootBuildImage {
-	imageName = "dht/pags/wallet-transaction-processor"
+tasks.build.doLast() {
+	copy {
+		from zipTree("${buildDir}/libs/${project.name}.jar")
+		into("build/dependency")
+	}
 }

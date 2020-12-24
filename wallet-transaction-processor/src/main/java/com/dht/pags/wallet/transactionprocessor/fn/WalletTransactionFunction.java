@@ -1,4 +1,4 @@
-package com.dht.pags.wallet.domain.fn;
+package com.dht.pags.wallet.transactionprocessor.fn;
 
 import com.dht.pags.wallet.domain.CreateTransactionCommand;
 import com.dht.pags.wallet.domain.TransactionCreatedEvent;
@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 @Service
 public class WalletTransactionFunction {

@@ -12,4 +12,13 @@ spring:
           destination: wallet.transactionCreatedEvent
           consumer:
             nativeDecoding: false
+application:
+  cosmosdb:
+    accountHost: https://acccosdb.documents.azure.com:443/
+    accountKey: 3CWBwopgQeNTYWpCr94kE83lzvlhIAxy6mfjbZ5LmgJfZQzKr2e9149e7QaNK1uZQXIwdH8JbYPok4VLCcIG1Q==
+    database: pages-dev
+    container: wallet-transaction-e0
+---
+spring:
+    profiles: e0
 
