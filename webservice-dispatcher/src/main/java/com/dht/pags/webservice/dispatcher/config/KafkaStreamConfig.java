@@ -1,5 +1,6 @@
 package com.dht.pags.webservice.dispatcher.config;
 
+import com.dht.pags.wallet.domain.CreateTransactionCommand;
 import com.dht.pags.wallet.domain.TransactionCreatedEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -28,32 +29,33 @@ import java.util.UUID;
  */
 @Configuration
 public class KafkaStreamConfig {
-    private static final String GROUP_ID_CONFIG = "webservice-dispatcher";
-    /** 这个ClientID作用是什么 */
-    private static final String CLIENT_ID_CONFIG = UUID.randomUUID().toString();
     private static final String BOOTSTRAP_SERVERS_CONFIG = "localhost:9092";
+    private static final String GROUP_ID_CONFIG = "webservice-dispatcher-consumer";
+    private static final String CLIENT_ID_CONFIG = "webservice-dispatcher-consumer-client";
     /**
      * 监听已经处理好的交易事件
      */
     private static final String TOPIC_RECEIVE_EVENT = "wallet.transactionCreatedEvent";
 
     @Bean
-    public KafkaSender<String, String> kafkaSender() {
+    public KafkaSender<String, CreateTransactionCommand> kafkaSender() {
         final Map<String, Object> senderProps = new HashMap<>(3);
         senderProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         senderProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         senderProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS_CONFIG);
-        return new DefaultKafkaSender(ProducerFactory.INSTANCE, SenderOptions.create(senderProps));
+        return new DefaultKafkaSender(ProducerFactory.INSTANCE,
+                SenderOptions.<String, CreateTransactionCommand>create(senderProps));
     }
 
     @Bean
-    public KafkaReceiver<Object, TransactionCreatedEvent> kafkaReceiver() {
+    public KafkaReceiver<String, TransactionCreatedEvent> kafkaReceiver() {
         final Map<String, Object> receiverProps = new HashMap<>(5);
         receiverProps.put(ConsumerConfig.GROUP_ID_CONFIG, GROUP_ID_CONFIG);
         receiverProps.put(ConsumerConfig.CLIENT_ID_CONFIG, CLIENT_ID_CONFIG);
         receiverProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS_CONFIG);
         receiverProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         receiverProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        return new DefaultKafkaReceiver(ConsumerFactory.INSTANCE, ReceiverOptions.create(receiverProps).subscription(Collections.singleton(TOPIC_RECEIVE_EVENT)));
+        return new DefaultKafkaReceiver(ConsumerFactory.INSTANCE,
+                ReceiverOptions.<String, TransactionCreatedEvent>create(receiverProps).subscription(Collections.singleton(TOPIC_RECEIVE_EVENT)));
     }
 }
