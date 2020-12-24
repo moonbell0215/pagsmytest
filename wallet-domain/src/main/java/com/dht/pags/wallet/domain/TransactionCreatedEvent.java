@@ -1,6 +1,7 @@
 package com.dht.pags.wallet.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
@@ -9,6 +10,7 @@ public class TransactionCreatedEvent {
     private final String id;
     private final double transactionAmount;
     private final String walletId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private final Date transactionDateTime;
     private final TransactionType transactionType;
     private final String description;
