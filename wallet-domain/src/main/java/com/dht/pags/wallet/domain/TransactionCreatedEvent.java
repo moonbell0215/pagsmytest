@@ -51,4 +51,17 @@ public class TransactionCreatedEvent {
     public String getDescription() {
         return description;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("TransactionCreatedEvent{");
+        sb.append("id='").append(id).append('\'');
+        sb.append(", transactionAmount=").append(transactionAmount);
+        sb.append(", walletId='").append(walletId).append('\'');
+        sb.append(", transactionDateTime=").append(transactionDateTime);
+        sb.append(", transactionType=").append(transactionType);
+        sb.append(", description='").append(description).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }
