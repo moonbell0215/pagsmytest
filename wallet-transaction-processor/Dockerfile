@@ -5,4 +5,5 @@ COPY ${DEPENDENCY}/BOOT-INF/lib /app/lib
 COPY ${DEPENDENCY}/META-INF /app/META-INF
 COPY ${DEPENDENCY}/BOOT-INF/classes /app
 EXPOSE 8080
-ENTRYPOINT ["sh", "-c", "java -XX:MaxRAMPercentage=75 ${JAVA_OPTS} -cp app:app/lib/* com.dht.pags.wallet.transactionprocessor.TransactionProcessorApplication --spring.profiles.active=${SPRING_PROFILES}"]
+ENV APPLICATIONINSIGHTS_ROLE_NAME=wallet-transaction-processor
+ENTRYPOINT ["sh", "-c", "java -javaagent:/app/applicationinsights-agent-3.0.0.jar -XX:MaxRAMPercentage=75 ${JAVA_OPTS} -cp app:app/lib/* com.dht.pags.wallet.transactionprocessor.TransactionProcessorApplication --spring.profiles.active=${SPRING_PROFILES}"]
