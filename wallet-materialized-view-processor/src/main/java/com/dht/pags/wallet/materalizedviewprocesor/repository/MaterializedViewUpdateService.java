@@ -3,6 +3,7 @@ package com.dht.pags.wallet.materalizedviewprocesor.repository;
 import com.azure.cosmos.*;
 import com.azure.cosmos.models.CosmosContainerProperties;
 import com.azure.cosmos.models.CosmosItemResponse;
+import com.dht.pags.wallet.domain.TransactionCreatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,9 @@ public class MaterializedViewUpdateService {
 
     @Value("${application.cosmosdb.container}")
     private String containerId;
+
+    @Value("${application.cosmosdb.balance}")
+    private String containerBalance;
 
     private final Logger log = LoggerFactory.getLogger(MaterializedViewUpdateService.class);
 
@@ -66,6 +70,11 @@ public class MaterializedViewUpdateService {
     }
 
     public <T> Mono<CosmosItemResponse<T>> createItem(T item) {
+        return cosmosContainer.createItem(item);
+    }
+
+    public <T> Mono<CosmosItemResponse<T>> createBalance(T item) {
+        cosmosContainer = cosmosDatabase.getContainer(containerBalance);
         return cosmosContainer.createItem(item);
     }
 }

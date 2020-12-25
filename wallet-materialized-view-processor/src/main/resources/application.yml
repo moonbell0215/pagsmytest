@@ -12,7 +12,7 @@ spring:
           destination: wallet.transactionCreatedEvent
           consumer:
             nativeDecoding: false
-        logandcontinue-in-0:
+        balanceUpdatedEventToCosmoDbView-in-0:
           destination: wallet.balanceUpdatedEvent
           consumer:
             nativeDecoding: false

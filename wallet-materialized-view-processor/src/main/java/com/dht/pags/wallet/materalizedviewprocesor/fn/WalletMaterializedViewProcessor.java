@@ -22,7 +22,7 @@ public class WalletMaterializedViewProcessor {
     @Bean
     public Consumer<TransactionCreatedEvent> walletTransactionToCosmoDbView() {
         return event -> {
-            LOGGER.info("Received: " + event);
+            LOGGER.info("ReceivedTran: " + event);
             materializedViewUpdateService.createItem(event).log().subscribe();
         };
     }
@@ -30,8 +30,8 @@ public class WalletMaterializedViewProcessor {
     @Bean
     public Consumer<BalanceUpdatedEvent> balanceUpdatedEventToCosmoDbView() {
         return event -> {
-            LOGGER.info("Received: " + event);
-            materializedViewUpdateService.createItem(event).log().subscribe();
+            LOGGER.info("ReceivedBalance: " + event);
+            materializedViewUpdateService.createBalance(event).log().subscribe();
         };
     }
 
