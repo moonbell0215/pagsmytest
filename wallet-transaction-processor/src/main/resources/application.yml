@@ -13,10 +13,6 @@ spring:
           destination: wallet.createTransactionCommand
           consumer:
             nativeDecoding: false
-        createTransactionCommandHandler-in-1:
-          destination: wallet.transactionCreatedEvent
-          consumer:
-            nativeDecoding: false
         createTransactionCommandHandler-out-0:
           destination: wallet.createTransactionCommandProcessedEvent
           consumer:

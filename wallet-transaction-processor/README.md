@@ -33,9 +33,9 @@
 1. 開個Terminal 跑 kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic wallet.transactionCreatedEvent --property print.key=true --property key.separator="|"
 1. 開個Terminal 跑 kafka-console-producer.bat --bootstrap-server localhost:9092 --topic wallet.createTransactionCommand --property parse.key=true --property key.separator="|"
 1. 在 kafka-console-producer.bat Terminal 輸入 
-* "tran-1"|{"transactionId":"tran-1","transactionAmount":10.1,"walletId":"wallet-1","transactionDateTime":"","transactionType":"DEPOSIT","description":"test"}
-* "tran-2"|{"transactionId":"tran-2","transactionAmount":10.1,"walletId":"wallet-1","transactionDateTime":"","transactionType":"DEPOSIT","description":"test"}
-* "tran-3"|{"transactionId":"tran-3","transactionAmount":10.1,"walletId":"wallet-2","transactionDateTime":"","transactionType":"DEPOSIT","description":"test"}
+* "tran-1"|{"orderId":"tran-1","orderAmount":101,"walletId":"wallet-1","transactionType":"DEPOSIT","description":"test"}
+* "tran-2"|{"orderId":"tran-2","orderAmount":10,"walletId":"wallet-1","transactionType":"DEPOSIT","description":"test"}
+* "tran-3"|{"orderId":"tran-3","orderAmount":102,"walletId":"wallet-2","transactionType":"DEPOSIT","description":"test"}
 1. 假如wallet-materialized-view-processor 也在跑,在Cosmo DB會看到三條記錄。transactionId 是唯一鍵,插入不成功,換個transactionId 
 
 
