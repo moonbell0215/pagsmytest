@@ -23,20 +23,19 @@ import reactor.kafka.sender.SenderRecord;
 @RestController
 @RequestMapping("/Wallet")
 public class WalletController {
-    private static Logger LOGGER = LoggerFactory.getLogger(WalletController.class);
-    @Autowired
     private KafkaSender<String, CreateTransactionCommand> kafkaSender;
-    @Autowired
     private KafkaReceiver<String, TransactionCreatedEvent> kafkaReceiver;
     /**
-     *
+     * 监听交易处理结果的Topic
      */
     private static final String TOPIC_SEND = "wallet.createTransactionCommand";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WalletController.class);
 
     /**
      * 冲正，直接向用户钱包里加钱
      *
-     * @return
+     * @return 处理结果
      */
     @PostMapping(path = "/Increase", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<TransactionCreatedEvent> increase(@RequestBody CreateTransactionCommand command) {
@@ -51,7 +50,7 @@ public class WalletController {
             return kafkaReceiver.receive()
                     .checkpoint("========== Messages are started being consumed. ==========")
                     .log()
-                    .filter(x -> x.value().getId().equals(transactionIdFromCommand))
+                    .filter(x -> x.value().getTransactionId().equals(transactionIdFromCommand))
                     .doOnError(e -> LOGGER.error("Receive failed", e))
                     .doOnNext((r -> r.receiverOffset().acknowledge()))
                     .map(ReceiverRecord::value)
@@ -61,5 +60,16 @@ public class WalletController {
             e.printStackTrace();
             return Mono.error(e);
         }
+    }
+
+
+    @Autowired
+    public void setKafkaSender(KafkaSender<String, CreateTransactionCommand> kafkaSender) {
+        this.kafkaSender = kafkaSender;
+    }
+
+    @Autowired
+    public void setKafkaReceiver(KafkaReceiver<String, TransactionCreatedEvent> kafkaReceiver) {
+        this.kafkaReceiver = kafkaReceiver;
     }
 }
