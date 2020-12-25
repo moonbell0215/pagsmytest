@@ -8,7 +8,9 @@ import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.Produced;
-import org.apache.kafka.streams.state.*;
+import org.apache.kafka.streams.state.KeyValueStore;
+import org.apache.kafka.streams.state.QueryableStoreTypes;
+import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.support.serializer.JsonSerde;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.Date;
 import java.util.UUID;
 import java.util.function.Function;
@@ -84,15 +85,14 @@ public class WalletTransactionFunction {
     private TransactionCreatedEventSet updateTransactionCreatedEventList(TransactionCreatedEvent event) {
         ReadOnlyKeyValueStore<String, TransactionCreatedEventSet> keyValueStore = interactiveQueryService.getQueryableStore(eventStoreName, QueryableStoreTypes.keyValueStore());
         TransactionCreatedEventSet eventSet = keyValueStore.get(event.getWalletId());
-        if(eventSet != null) {
+        if (eventSet != null) {
             LOGGER.info("Event Store size is " + eventSet.getEventSet().size());
             eventSet.getEventSet().forEach(x -> LOGGER.info(x.toString()));
-            eventSet.getEventSet().add(event);
         } else {
             LOGGER.info("Event Store is empty, key=" + event.getWalletId());
             eventSet = new TransactionCreatedEventSet();
-            eventSet.getEventSet().add(event);
         }
+        eventSet.getEventSet().add(event);
         return eventSet;
     }
 
@@ -105,15 +105,14 @@ public class WalletTransactionFunction {
     }
 
     private boolean validateCreateTransactionCommand(CreateTransactionCommand createTransactionCommand) {
-        //TODO: Implement validation logic
-        //SUCCESS orderAmount 大於 100
-        if (createTransactionCommand.getOrderAmount() > 100) {
+        if (!createTransactionCommand.getTransactionType().isReduce()) {
             return true;
-        } else {
-            //test FAILURE orderAmount 小於等於 100
-            return false;
         }
 
+        ReadOnlyKeyValueStore<String, TransactionCreatedEventSet> keyValueStore = interactiveQueryService.getQueryableStore(eventStoreName, QueryableStoreTypes.keyValueStore());
+        TransactionCreatedEventSet eventSet = keyValueStore.get(createTransactionCommand.getWalletId());
+        return eventSet != null &&
+                eventSet.getEventSet().stream().mapToDouble(TransactionCreatedEvent::getTransactionAmount).sum() >= createTransactionCommand.getOrderAmount();
     }
 
     private TransactionCreatedEvent createTransactionEvent(CreateTransactionCommand command) {
