@@ -3,6 +3,8 @@ package com.dht.pags.wallet.domain;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 public class TransactionCreatedEvent {
 
     /**
@@ -89,5 +91,18 @@ public class TransactionCreatedEvent {
         sb.append(", description='").append(description).append('\'');
         sb.append('}');
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TransactionCreatedEvent that = (TransactionCreatedEvent) o;
+        return Double.compare(that.transactionAmount, transactionAmount) == 0 && transactionDateTime == that.transactionDateTime && Objects.equals(id, that.id) && Objects.equals(orderId, that.orderId) && Objects.equals(walletId, that.walletId) && transactionType == that.transactionType && description.equals(that.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, orderId, transactionAmount, walletId, transactionDateTime, transactionType, description);
     }
 }
