@@ -18,8 +18,8 @@ import java.util.function.BiFunction;
 @Service
 public class WalletTransactionFunction {
     private static final Logger LOGGER = LoggerFactory.getLogger(WalletTransactionFunction.class);
-    static public final class TransactionCreatedEventSerde extends JsonSerde<TransactionCreatedEvent> { }
-    static public final class BalanceUpdatedEventSerde extends JsonSerde<BalanceUpdatedEvent> { }
+    public static final class TransactionCreatedEventSerde extends JsonSerde<TransactionCreatedEvent> { }
+    public static final class BalanceUpdatedEventSerde extends JsonSerde<BalanceUpdatedEvent> { }
 
     @Value("${application.topic.name.out-1}")
     private String SUCCESS_TRANSACTION_TOPIC_NAME; //wallet.transactionCreatedEvent
@@ -72,7 +72,7 @@ public class WalletTransactionFunction {
     private boolean validateCreateTransactionCommand(CreateTransactionCommand createTransactionCommand) {
         //TODO: Implement validation logic
         //test SUCCESS TransactionAmount 大於 100
-        if(createTransactionCommand.getTransactionAmount() >100 ){
+        if(createTransactionCommand.getOrderAmount() >100 ){
             return true;
         }else{
         //test FAILURE TransactionAmount 小於等於 100
@@ -104,8 +104,8 @@ public class WalletTransactionFunction {
     }
     private CreateTransactionCommandProcessedEvent createTransactionCommandProcessedEvent(CreateTransactionCommand createTransactionCommand, TransactionStatus transactionStatus) {
         //TODO: Implement logic
-        return new CreateTransactionCommandProcessedEvent(createTransactionCommand.getTransactionId(),
-                createTransactionCommand.getTransactionAmount(),
+        return new CreateTransactionCommandProcessedEvent(createTransactionCommand.getOrderId(),
+                createTransactionCommand.getOrderAmount(),
                 createTransactionCommand.getWalletId(),
                 new Date(),
                 createTransactionCommand.getTransactionType(),

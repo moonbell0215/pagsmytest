@@ -67,7 +67,7 @@ public class WebController {
     public Mono<TransactionCreatedEvent> doTransaction(@RequestBody CreateTransactionCommand command) throws JsonProcessingException {
         LOGGER.info("/transaction received: " + command.toString());
 
-        final String transactionIdFromCommand = command.getTransactionId();
+        final String transactionIdFromCommand = command.getOrderId();
         SenderRecord<String, CreateTransactionCommand, Integer> message = SenderRecord.create(new ProducerRecord<>
                         ("wallet.createTransactionCommand",
                         transactionIdFromCommand,
@@ -85,7 +85,7 @@ public class WebController {
                     dateFormat.format(new Date(metadata.timestamp())));
         });
 
-        return Mono.just(new TransactionCreatedEvent(command.getTransactionId(),
-                command.getTransactionAmount(),command.getWalletId(),new Date(), TransactionType.DEPOSIT,command.getDescription()));
+        return Mono.just(new TransactionCreatedEvent(command.getOrderId(),
+                command.getOrderAmount(),command.getWalletId(),new Date(), TransactionType.DEPOSIT,command.getDescription()));
     }
 }

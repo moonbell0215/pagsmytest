@@ -7,43 +7,43 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Date;
 
 public class CreateTransactionCommand {
-    private final String transactionId;
-    private final double transactionAmount;
+    private final String orderId;
+    private final double orderAmount;
     private final String walletId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private final Date transactionDateTime;
+    private final Date orderDateTime;
     private final TransactionType transactionType;
     private final String description;
 
     @JsonCreator
-    public CreateTransactionCommand(@JsonProperty("transactionId") String transactionId,
+    public CreateTransactionCommand(@JsonProperty("transactionId") String orderId,
                                     @JsonProperty("transactionAmount") double transactionAmount,
                                     @JsonProperty("walletId") String walletId,
-                                    @JsonProperty("transactionDateTime") Date transactionDateTime,
+                                    @JsonProperty("transactionDateTime") Date orderDateTime,
                                     @JsonProperty("transactionType") TransactionType transactionType,
                                     @JsonProperty("description") String description) {
-        this.transactionId = transactionId;
-        this.transactionAmount = transactionAmount;
+        this.orderId = orderId;
+        this.orderAmount = transactionAmount;
         this.walletId = walletId;
-        this.transactionDateTime = transactionDateTime;
+        this.orderDateTime = orderDateTime;
         this.transactionType = transactionType;
         this.description = description;
     }
 
-    public String getTransactionId() {
-        return transactionId;
+    public String getOrderId() {
+        return orderId;
     }
 
-    public double getTransactionAmount() {
-        return transactionAmount;
+    public double getOrderAmount() {
+        return orderAmount;
     }
 
     public String getWalletId() {
         return walletId;
     }
 
-    public Date getTransactionDateTime() {
-        return transactionDateTime;
+    public Date getOrderDateTime() {
+        return orderDateTime;
     }
 
     public TransactionType getTransactionType() {
@@ -57,10 +57,10 @@ public class CreateTransactionCommand {
     @Override
     public String toString() {
         return "CreateTransactionCommand{" +
-                "transactionId='" + transactionId + '\'' +
-                ", transactionAmount=" + transactionAmount +
+                "orderId='" + orderId + '\'' +
+                ", orderAmount=" + orderAmount +
                 ", walletId='" + walletId + '\'' +
-                ", transactionDateTime=" + transactionDateTime +
+                ", orderDateTime=" + orderDateTime +
                 ", transactionType=" + transactionType +
                 ", description='" + description + '\'' +
                 '}';
