@@ -10,8 +10,7 @@ public class CreateTransactionCommandProcessedEvent {
     private final String transactionId;
     private final double transactionAmount;
     private final String walletId;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private final Date transactionDateTime;
+    private final long transactionDateTime;
     private final TransactionType transactionType;
     private final String description;
     private final TransactionStatus transactionStatus;
@@ -20,7 +19,7 @@ public class CreateTransactionCommandProcessedEvent {
     public CreateTransactionCommandProcessedEvent(@JsonProperty("transactionId") String transactionId,
                                                   @JsonProperty("transactionAmount") double transactionAmount,
                                                   @JsonProperty("walletId") String walletId,
-                                                  @JsonProperty("transactionDateTime") Date transactionDateTime,
+                                                  @JsonProperty("transactionDateTime") long transactionDateTime,
                                                   @JsonProperty("transactionType") TransactionType transactionType,
                                                   @JsonProperty("description") String description,
                                                   @JsonProperty("transactionStatus") TransactionStatus transactionStatus) {
@@ -45,7 +44,7 @@ public class CreateTransactionCommandProcessedEvent {
         return walletId;
     }
 
-    public Date getTransactionDateTime() {
+    public long getTransactionDateTime() {
         return transactionDateTime;
     }
 
