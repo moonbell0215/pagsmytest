@@ -41,8 +41,11 @@ public class WalletController {
     public Mono<TransactionCreatedEvent> increase(@RequestBody CreateTransactionCommand command) {
         try {
             LOGGER.info("/transaction received: " + command.toString());
-            final String transactionIdFromCommand = command.getOrderId();
-            SenderRecord<String, CreateTransactionCommand, Integer> message = SenderRecord.create(new ProducerRecord<>(TOPIC_SEND, transactionIdFromCommand, command), 1);
+
+            final String walletId = command.getWalletId();
+            final String orderId = command.getOrderId();
+
+            SenderRecord<String, CreateTransactionCommand, Integer> message = SenderRecord.create(new ProducerRecord<>(TOPIC_SEND, walletId, command), 1);
             kafkaSender.send(Mono.just(message))
                     .doOnError(e -> LOGGER.error("Send failed", e))
                     .subscribe();
@@ -50,7 +53,7 @@ public class WalletController {
             return kafkaReceiver.receive()
                     .checkpoint("========== Messages are started being consumed. ==========")
                     .log()
-                    .filter(x -> x.value().getTransactionId().equals(transactionIdFromCommand))
+                    .filter(x -> x.value().getOrderId().equals(orderId))
                     .doOnError(e -> LOGGER.error("Receive failed", e))
                     .doOnNext((r -> r.receiverOffset().acknowledge()))
                     .map(ReceiverRecord::value)

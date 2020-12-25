@@ -85,7 +85,7 @@ public class WebController {
                     dateFormat.format(new Date(metadata.timestamp())));
         });
 
-        return Mono.just(new TransactionCreatedEvent(command.getOrderId(),
+        return Mono.just(new TransactionCreatedEvent(UUID.randomUUID().toString(), command.getOrderId(),
                 command.getOrderAmount(),command.getWalletId(), System.currentTimeMillis(), TransactionType.DEPOSIT,command.getDescription()));
     }
 }

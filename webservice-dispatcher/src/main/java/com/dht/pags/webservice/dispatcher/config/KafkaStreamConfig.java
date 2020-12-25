@@ -22,12 +22,12 @@ import reactor.kafka.sender.internals.ProducerFactory;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * @author cloud.d
  */
 @Configuration
+@SuppressWarnings("unchecked")
 public class KafkaStreamConfig {
     private static final String BOOTSTRAP_SERVERS_CONFIG = "localhost:9092";
     private static final String GROUP_ID_CONFIG = "webservice-dispatcher-consumer";
@@ -49,7 +49,7 @@ public class KafkaStreamConfig {
 
     @Bean
     public KafkaReceiver<String, TransactionCreatedEvent> kafkaReceiver() {
-        final Map<String, Object> receiverProps = new HashMap<>(5);
+        final Map<String, Object> receiverProps = new HashMap<>(6);
         receiverProps.put(ConsumerConfig.GROUP_ID_CONFIG, GROUP_ID_CONFIG);
         receiverProps.put(ConsumerConfig.CLIENT_ID_CONFIG, CLIENT_ID_CONFIG);
         receiverProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS_CONFIG);
