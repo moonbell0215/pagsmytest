@@ -71,11 +71,11 @@ public class WalletTransactionFunction {
 
     private boolean validateCreateTransactionCommand(CreateTransactionCommand createTransactionCommand) {
         //TODO: Implement validation logic
-        //test SUCCESS TransactionAmount 大於 100
+        //SUCCESS orderAmount 大於 100
         if(createTransactionCommand.getOrderAmount() >100 ){
             return true;
         }else{
-        //test FAILURE TransactionAmount 小於等於 100
+        //test FAILURE orderAmount 小於等於 100
             return false;
         }
 
@@ -107,7 +107,7 @@ public class WalletTransactionFunction {
         return new CreateTransactionCommandProcessedEvent(createTransactionCommand.getOrderId(),
                 createTransactionCommand.getOrderAmount(),
                 createTransactionCommand.getWalletId(),
-                new Date(),
+                System.currentTimeMillis(),
                 createTransactionCommand.getTransactionType(),
                 "Note by event:" + createTransactionCommand.getDescription(),
                 transactionStatus);

@@ -10,8 +10,7 @@ public class TransactionCreatedEvent {
     private final String id;
     private final double transactionAmount;
     private final String walletId;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private final Date transactionDateTime;
+    private final long transactionDateTime;
     private final TransactionType transactionType;
     private final String description;
 
@@ -19,7 +18,7 @@ public class TransactionCreatedEvent {
     public TransactionCreatedEvent(@JsonProperty("id") String id,
                                    @JsonProperty("transactionAmount") double transactionAmount,
                                    @JsonProperty("walletId") String walletId,
-                                   @JsonProperty("transactionDateTime") Date transactionDateTime,
+                                   @JsonProperty("transactionDateTime") long transactionDateTime,
                                    @JsonProperty("transactionType") TransactionType transactionType,
                                    @JsonProperty("description") String description) {
         this.id = id;
@@ -42,7 +41,7 @@ public class TransactionCreatedEvent {
         return walletId;
     }
 
-    public Date getTransactionDateTime() {
+    public long getTransactionDateTime() {
         return transactionDateTime;
     }
 
