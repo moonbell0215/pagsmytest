@@ -4,14 +4,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TransactionCreatedEvent {
-    /**
-     * 本次交易ID  成功才會有交易ID (CosmoDB )
-     */
-    private final String id;
+
     /**
      * 本次交易ID  成功才會有交易ID
      */
-    private final String transactionId;
+    private final String id;
     /**
      * 會員訂單編號
      */
@@ -38,15 +35,14 @@ public class TransactionCreatedEvent {
     private final String description;
 
     @JsonCreator
-    public TransactionCreatedEvent(@JsonProperty("transactionId") String transactionId,
+    public TransactionCreatedEvent(@JsonProperty("id") String id,
                                    @JsonProperty("orderId") String orderId,
                                    @JsonProperty("transactionAmount") double transactionAmount,
                                    @JsonProperty("walletId") String walletId,
                                    @JsonProperty("transactionDateTime") long transactionDateTime,
                                    @JsonProperty("transactionType") TransactionType transactionType,
                                    @JsonProperty("description") String description) {
-        this.id = transactionId;
-        this.transactionId = transactionId;
+        this.id = id;
         this.orderId = orderId;
         this.transactionAmount = transactionAmount;
         this.walletId = walletId;
@@ -55,11 +51,8 @@ public class TransactionCreatedEvent {
         this.description = description;
     }
 
-    public String getId() { return id; }
-
-
-    public String getTransactionId() {
-        return transactionId;
+    public String getId() {
+        return id;
     }
 
     public String getOrderId() { return orderId; }
@@ -87,7 +80,7 @@ public class TransactionCreatedEvent {
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("TransactionCreatedEvent{");
-        sb.append("transactionId='").append(transactionId).append('\'');
+        sb.append("id='").append(id).append('\'');
         sb.append(", orderId='").append(orderId).append('\'');
         sb.append(", transactionAmount=").append(transactionAmount);
         sb.append(", walletId='").append(walletId).append('\'');

@@ -82,7 +82,7 @@ public class WalletTransactionFunction {
 
     private TransactionCreatedEvent createTransactionEvent(CreateTransactionCommandProcessedEvent createTransactionCommandProcessedEvent) {
         //TODO: Implement logic
-        return new TransactionCreatedEvent(createTransactionCommandProcessedEvent.getTransactionId(),
+        return new TransactionCreatedEvent(createTransactionCommandProcessedEvent.getId(),
                 createTransactionCommandProcessedEvent.getOrderId(),
                 createTransactionCommandProcessedEvent.getTransactionAmount(),
                 createTransactionCommandProcessedEvent.getWalletId(),
@@ -94,7 +94,7 @@ public class WalletTransactionFunction {
 
     private BalanceUpdatedEvent createBalanceUpdatedEvent(TransactionCreatedEvent transactionCreatedEvent) {
         //TODO: Implement logic
-        return new BalanceUpdatedEvent(transactionCreatedEvent.getTransactionId(),
+        return new BalanceUpdatedEvent(transactionCreatedEvent.getId(),
                 transactionCreatedEvent.getTransactionAmount(),
                 transactionCreatedEvent.getWalletId(),
                 transactionCreatedEvent.getTransactionAmount()
