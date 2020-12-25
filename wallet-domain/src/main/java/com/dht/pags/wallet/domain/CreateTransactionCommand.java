@@ -1,10 +1,7 @@
 package com.dht.pags.wallet.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.Date;
 
 public class CreateTransactionCommand {
     /**
@@ -36,9 +33,16 @@ public class CreateTransactionCommand {
                                     @JsonProperty("transactionType") TransactionType transactionType,
                                     @JsonProperty("description") String description) {
         this.orderId = orderId;
-        this.orderAmount = orderAmount;
         this.walletId = walletId;
         this.transactionType = transactionType;
+        if(this.transactionType.isReduce())
+        {
+            this.orderAmount = Math.abs(orderAmount) * -1;
+        }
+        else
+        {
+            this.orderAmount = orderAmount;
+        }
         this.description = description;
     }
 
