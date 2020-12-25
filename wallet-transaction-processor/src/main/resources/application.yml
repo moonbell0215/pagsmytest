@@ -21,3 +21,9 @@ spring:
           destination: wallet.createTransactionCommandProcessedEvent
           consumer:
             nativeDecoding: false
+
+application:
+  topic:
+    name:
+      out-1: wallet.transactionCreatedEvent
+      out-2: wallet.balanceUpdatedEvent

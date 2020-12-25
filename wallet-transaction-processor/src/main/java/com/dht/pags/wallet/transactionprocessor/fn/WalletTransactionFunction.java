@@ -7,6 +7,7 @@ import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.support.serializer.JsonSerde;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,11 @@ public class WalletTransactionFunction {
     private static final Logger LOGGER = LoggerFactory.getLogger(WalletTransactionFunction.class);
     static public final class TransactionCreatedEventSerde extends JsonSerde<TransactionCreatedEvent> { }
     static public final class BalanceUpdatedEventSerde extends JsonSerde<BalanceUpdatedEvent> { }
+
+    @Value("${application.topic.name.out-1}")
+    private String SUCCESS_TRANSACTION_TOPIC_NAME; //wallet.transactionCreatedEvent
+    @Value("${application.topic.name.out-2}")
+    private String BALANCE_UPDATED_TOPIC_NAME; //wallet.balanceUpdatedEvent
     @Bean
     public BiFunction<KStream<String, CreateTransactionCommand>,
             KStream<String, TransactionCreatedEvent>,
@@ -36,14 +42,14 @@ public class WalletTransactionFunction {
                     .filter((key, processedEvent) -> TransactionStatus.SUCCESS.equals(processedEvent.getTransactionStatus()))
                     .map((key, create) -> new KeyValue<>(key, createTransactionEvent(create)))
                     .peek((k, v) -> LOGGER.info("transactionCreatedEvent: " + v))
-                    .to("wallet.transactionCreatedEvent", Produced.with(Serdes.String(), new TransactionCreatedEventSerde()))
+                    .to(SUCCESS_TRANSACTION_TOPIC_NAME, Produced.with(Serdes.String(), new TransactionCreatedEventSerde()))
             ;
 
             //out -> wallet.balanceUpdatedEvent 餘額記錄 -> BalanceUpdatedEvent
             //會在wallet.transactionCreatedEvent有輸出後，才會觸發此項
             transactionCreatedEventKStream.peek((k, v) -> LOGGER.info("balanceUpdatedEvent: " + v))
                     .map((key, create) -> new KeyValue<>(key, createBalanceUpdatedEvent(create)))
-                    .to("wallet.balanceUpdatedEvent", Produced.with(Serdes.String(), new BalanceUpdatedEventSerde()));
+                    .to(BALANCE_UPDATED_TOPIC_NAME, Produced.with(Serdes.String(), new BalanceUpdatedEventSerde()));
 
             //in  -> wallet.createTransactionCommand  輸入申請帳變 -> CreateTransactionCommand
             return createTransactionCommandProcessedEventKStream.peek((k, v) -> LOGGER.info("createTransactionCommandProcessedEventKStream: " + v));
@@ -65,9 +71,11 @@ public class WalletTransactionFunction {
 
     private boolean validateCreateTransactionCommand(CreateTransactionCommand createTransactionCommand) {
         //TODO: Implement validation logic
+        //test SUCCESS TransactionAmount 大於 100
         if(createTransactionCommand.getTransactionAmount() >100 ){
             return true;
         }else{
+        //test FAILURE TransactionAmount 小於等於 100
             return false;
         }
 
