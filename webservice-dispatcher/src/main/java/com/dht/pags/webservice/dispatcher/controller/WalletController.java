@@ -21,6 +21,7 @@ import reactor.kafka.sender.SenderRecord;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author cloud.d
@@ -84,23 +85,22 @@ public class WalletController {
                     .doOnError(e -> LOGGER.error("Receive failed", e))
                     .subscribe();
 
-            kafkaFlux.log()
-                    .doOnNext(r -> r.receiverOffset().acknowledge())
-                    .map(ReceiverRecord::value)
-                    .doOnNext(r -> LOGGER.info(r.toString()))
-                    .doOnError(e -> LOGGER.error("Receiver failed", e))
-                    .subscribe();
+//            kafkaFlux.log()
+//                    .doOnNext(r -> r.receiverOffset().acknowledge())
+//                    .map(ReceiverRecord::value)
+//                    .doOnNext(r -> LOGGER.info(r.toString()))
+//                    .doOnError(e -> LOGGER.error("Receiver failed", e))
+//                    .subscribe();
 
             // 这里的sample https://projectreactor.io/docs/kafka/release/reference/#api-guide-receiver
-            kafkaFlux.subscribe(r -> {
-               LOGGER.info("receive message from kafka: %s\n" + r);
-               r.receiverOffset().acknowledge();
-            });
-
+//            kafkaFlux.subscribe(r -> {
+//               LOGGER.info("receive message from kafka: %s\n" + r);
+//               r.receiverOffset().acknowledge();
+//            });
 
 
             return Mono.just(new TransactionCreatedEvent(command.getTransactionId(), command.getTransactionAmount(),
-                    command.getWalletId(), System.currentTimeMillis(), TransactionType.DEPOSIT, command.getDescription()));
+                    command.getWalletId(), new Date(), TransactionType.DEPOSIT, command.getDescription()));
         } catch (Exception e) {
             e.printStackTrace();
             return Mono.error(e);
