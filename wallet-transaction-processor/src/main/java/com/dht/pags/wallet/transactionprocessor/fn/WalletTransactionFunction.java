@@ -131,11 +131,20 @@ public class WalletTransactionFunction {
     }
 
     private BalanceUpdatedEvent createBalanceUpdatedEvent(String id ,CreateTransactionCommand command) {
+        TransactionCreatedEventSet eventSet = getTransactionCreatedEventSet(command.getWalletId());
+        double balance = 0;
+        if (eventSet != null) {
+            LOGGER.info("Event Store size is " + eventSet.getEventSet().size());
+            balance = eventSet.getEventSet().stream().mapToDouble(TransactionCreatedEvent::getTransactionAmount).sum();
+        } else {
+            LOGGER.info("Event Store is empty, key=" + command.getWalletId());
+            balance = command.getOrderAmount();
+        }
         //TODO: Implement logic
         return new BalanceUpdatedEvent(id,
                 command.getOrderAmount(),
                 command.getWalletId(),
-                command.getOrderAmount() * 2
+                balance
         );
     }
 
