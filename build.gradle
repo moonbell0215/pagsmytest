@@ -20,7 +20,7 @@ allprojects {
     }
 
     ext {
-        set('springCloudVersion', "2020.0.0-M6")
+        set('springCloudVersion', "2020.0.0")
     }
     dependencyManagement {
         imports {
