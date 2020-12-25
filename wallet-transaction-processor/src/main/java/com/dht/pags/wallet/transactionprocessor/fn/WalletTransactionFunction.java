@@ -2,9 +2,13 @@ package com.dht.pags.wallet.transactionprocessor.fn;
 
 import com.dht.pags.wallet.domain.*;
 import org.apache.kafka.common.serialization.Serdes;
+import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.Materialized;
+import org.apache.kafka.streams.kstream.Named;
 import org.apache.kafka.streams.kstream.Produced;
+import org.apache.kafka.streams.state.KeyValueStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,17 +47,17 @@ public class WalletTransactionFunction {
                     );
             transactionCreatedEventStream.to(SUCCESS_TRANSACTION_TOPIC_NAME,Produced.with(Serdes.String(),new TransactionCreatedEventSerde()));
 
+            transactionCreatedEventStream
+                    .map((key, event) -> new KeyValue<>(event.getId(), event))
+                    .toTable(Materialized.<String,TransactionCreatedEvent,KeyValueStore<Bytes,byte[]>> as("TransactionCreatedEvent").withKeySerde(Serdes.String()).withValueSerde(new TransactionCreatedEventSerde()));
+
             KStream<String, BalanceUpdatedEvent> balanceUpdatedEventStream = resultKStream
                     .filter((key, value) -> TransactionStatus.SUCCESS.equals(value.getTransactionStatus()))
                     .map((key, event) -> new KeyValue<>(key, createBalanceUpdatedEvent(event.getCommand()))
                     );
             balanceUpdatedEventStream.to(BALANCE_UPDATED_TOPIC_NAME,Produced.with(Serdes.String(),new BalanceUpdatedEventSerde()));
 
-            KStream<String, CreateTransactionCommandProcessedEvent> result =
-                    commandKStream.map((key, command) -> new KeyValue<>(key, validateAndCreateTransactionCreatedEvent(command))
-                    );
-
-            return result;
+            return resultKStream;
         };
     }
 
