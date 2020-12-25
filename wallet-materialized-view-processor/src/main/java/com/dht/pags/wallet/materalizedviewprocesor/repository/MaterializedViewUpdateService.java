@@ -3,7 +3,7 @@ package com.dht.pags.wallet.materalizedviewprocesor.repository;
 import com.azure.cosmos.*;
 import com.azure.cosmos.models.CosmosContainerProperties;
 import com.azure.cosmos.models.CosmosItemResponse;
-import com.dht.pags.wallet.domain.TransactionCreatedEvent;
+import com.dht.pags.wallet.domain.BalanceUpdatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,11 +70,9 @@ public class MaterializedViewUpdateService {
     }
 
     public <T> Mono<CosmosItemResponse<T>> createItem(T item) {
-        return cosmosContainer.createItem(item);
-    }
-
-    public <T> Mono<CosmosItemResponse<T>> createBalance(T item) {
-        cosmosContainer = cosmosDatabase.getContainer(containerBalance);
+        if (item instanceof BalanceUpdatedEvent) {
+            cosmosContainer = cosmosDatabase.getContainer(containerBalance);
+        }
         return cosmosContainer.createItem(item);
     }
 }

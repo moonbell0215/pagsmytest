@@ -31,7 +31,7 @@ public class WalletMaterializedViewProcessor {
     public Consumer<BalanceUpdatedEvent> balanceUpdatedEventToCosmoDbView() {
         return event -> {
             LOGGER.info("ReceivedBalance: " + event);
-            materializedViewUpdateService.createBalance(event).log().subscribe();
+            materializedViewUpdateService.createItem(event).log().subscribe();
         };
     }
 
