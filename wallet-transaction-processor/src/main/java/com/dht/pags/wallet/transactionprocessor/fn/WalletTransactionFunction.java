@@ -85,12 +85,12 @@ public class WalletTransactionFunction {
     private TransactionCreatedEventSet updateTransactionCreatedEventList(TransactionCreatedEvent event) {
         ReadOnlyKeyValueStore<String, TransactionCreatedEventSet> keyValueStore = interactiveQueryService.getQueryableStore(STORE_NAME, QueryableStoreTypes.keyValueStore());
         TransactionCreatedEventSet eventSet = keyValueStore.get(event.getWalletId());
-        if (eventSet != null) {
-            LOGGER.info("Event Store size is " + eventSet.getEventSet().size());
-            eventSet.getEventSet().forEach(x -> LOGGER.info(x.toString()));
-        } else {
+        if (eventSet == null) {
             LOGGER.info("Event Store is empty, key=" + event.getWalletId());
             eventSet = new TransactionCreatedEventSet();
+        } else {
+            LOGGER.info("Event Store size is " + eventSet.getEventSet().size());
+            eventSet.getEventSet().forEach(x -> LOGGER.info(x.toString()));
         }
         eventSet.getEventSet().add(event);
         return eventSet;
