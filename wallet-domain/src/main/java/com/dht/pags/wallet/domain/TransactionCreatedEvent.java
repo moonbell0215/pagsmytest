@@ -5,6 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TransactionCreatedEvent {
     /**
+     * 本次交易ID  成功才會有交易ID (CosmoDB )
+     */
+    private final String id;
+    /**
      * 本次交易ID  成功才會有交易ID
      */
     private final String transactionId;
@@ -41,6 +45,7 @@ public class TransactionCreatedEvent {
                                    @JsonProperty("transactionDateTime") long transactionDateTime,
                                    @JsonProperty("transactionType") TransactionType transactionType,
                                    @JsonProperty("description") String description) {
+        this.id = transactionId;
         this.transactionId = transactionId;
         this.orderId = orderId;
         this.transactionAmount = transactionAmount;
@@ -49,6 +54,9 @@ public class TransactionCreatedEvent {
         this.transactionType = transactionType;
         this.description = description;
     }
+
+    public String getId() { return id; }
+
 
     public String getTransactionId() {
         return transactionId;

@@ -5,6 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class BalanceUpdatedEvent {
     /**
+     * 本次交易ID  成功才會有交易ID (CosmoDB )
+     */
+    private final String id;
+    /**
      * 本次交易ID
      */
     private final String transactionId;
@@ -27,11 +31,14 @@ public class BalanceUpdatedEvent {
                                @JsonProperty("transactionAmount") double transactionAmount,
                                @JsonProperty("walletId") String walletId,
                                @JsonProperty("balance")  double balance) {
+        this.id = transactionId;
         this.transactionId = transactionId;
         this.transactionAmount = transactionAmount;
         this.walletId = walletId;
         this.balance = balance;
     }
+
+    public String getId() { return id; }
 
     public String getTransactionId() {
         return transactionId;

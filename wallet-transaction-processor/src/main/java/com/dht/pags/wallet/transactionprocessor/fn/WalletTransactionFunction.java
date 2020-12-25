@@ -104,13 +104,14 @@ public class WalletTransactionFunction {
     }
     private CreateTransactionCommandProcessedEvent createTransactionCommandProcessedEvent(CreateTransactionCommand createTransactionCommand, TransactionStatus transactionStatus) {
         //TODO: Implement logic
-        return new CreateTransactionCommandProcessedEvent(createTransactionCommand.getOrderId(),
-                createTransactionCommand.getOrderAmount(),
+        return new CreateTransactionCommandProcessedEvent(
                 //TODO-暫時使用createTransactionCommand.getWalletId() + createTransactionCommand.getOrderId()
                 //state store . Key = wallet Id . Value list <TransactionCreatedEvent>
                 //數一下list size 就知道下一個sequence
                 //開發中
                 createTransactionCommand.getWalletId()+"-"+createTransactionCommand.getOrderId(),
+                createTransactionCommand.getOrderAmount(),
+                createTransactionCommand.getOrderId(),
                 createTransactionCommand.getWalletId(),
                 System.currentTimeMillis(),
                 createTransactionCommand.getTransactionType(),
