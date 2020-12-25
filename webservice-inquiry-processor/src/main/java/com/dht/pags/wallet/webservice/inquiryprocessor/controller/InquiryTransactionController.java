@@ -64,22 +64,6 @@ public class InquiryTransactionController {
 
 
 
-    @GetMapping("/write")
-    public void write() {
-
-        Family andersenFamilyItem = Families.getAndersenFamilyItem();
-        Family wakefieldFamilyItem = Families.getWakefieldFamilyItem();
-        Family johnsonFamilyItem = Families.getJohnsonFamilyItem();
-        Family smithFamilyItem = Families.getSmithFamilyItem();
-
-        //  Setup family items to create
-        Flux<Family> families = Flux.just(andersenFamilyItem,
-                wakefieldFamilyItem,
-                johnsonFamilyItem,
-                smithFamilyItem);
-
-    }
-
 
 
 
