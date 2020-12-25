@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.support.serializer.JsonSerde;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.function.BiFunction;
 
 @Service
@@ -94,12 +93,12 @@ public class WalletTransactionFunction {
 
     private BalanceUpdatedEvent createBalanceUpdatedEvent(TransactionCreatedEvent transactionCreatedEvent) {
         //TODO: Implement logic
-        return new BalanceUpdatedEvent(transactionCreatedEvent.getId(),
+        return new BalanceUpdatedEvent(transactionCreatedEvent.getTransactionId(),
                 transactionCreatedEvent.getTransactionAmount(),
                 transactionCreatedEvent.getWalletId(),
-                transactionCreatedEvent.getTransactionDateTime(),
-                transactionCreatedEvent.getTransactionType(),
-                "Note by event:" + transactionCreatedEvent.getDescription()
+                transactionCreatedEvent.getTransactionAmount()
+                //TODO- 測試 ，先用TransactionAmount 的值
+                //暫時還沒有記錄balance
         );
     }
     private CreateTransactionCommandProcessedEvent createTransactionCommandProcessedEvent(CreateTransactionCommand createTransactionCommand, TransactionStatus transactionStatus) {
