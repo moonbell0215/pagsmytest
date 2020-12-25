@@ -82,9 +82,13 @@ public class WalletTransactionFunction {
         };
     }
 
-    private TransactionCreatedEventSet updateTransactionCreatedEventList(TransactionCreatedEvent event) {
+    private  TransactionCreatedEventSet getTransactionCreatedEventSet(String walletId){
         ReadOnlyKeyValueStore<String, TransactionCreatedEventSet> keyValueStore = interactiveQueryService.getQueryableStore(STORE_NAME, QueryableStoreTypes.keyValueStore());
-        TransactionCreatedEventSet eventSet = keyValueStore.get(event.getWalletId());
+        return keyValueStore.get(walletId);
+    }
+
+    private TransactionCreatedEventSet updateTransactionCreatedEventList(TransactionCreatedEvent event) {
+        TransactionCreatedEventSet eventSet = getTransactionCreatedEventSet(event.getWalletId());
         if (eventSet != null) {
             LOGGER.info("Event Store size is " + eventSet.getEventSet().size());
             eventSet.getEventSet().forEach(x -> LOGGER.info(x.toString()));
@@ -106,10 +110,10 @@ public class WalletTransactionFunction {
 
     private boolean validateCreateTransactionCommand(CreateTransactionCommand createTransactionCommand) {
         if (!createTransactionCommand.getTransactionType().isReduce()) {
+
             return true;
         }
-        ReadOnlyKeyValueStore<String, TransactionCreatedEventSet> keyValueStore = interactiveQueryService.getQueryableStore(STORE_NAME, QueryableStoreTypes.keyValueStore());
-        TransactionCreatedEventSet eventSet = keyValueStore.get(createTransactionCommand.getWalletId());
+        TransactionCreatedEventSet eventSet = getTransactionCreatedEventSet(createTransactionCommand.getWalletId());
         return eventSet != null &&
                 eventSet.getEventSet().stream().mapToDouble(TransactionCreatedEvent::getTransactionAmount).sum() >= createTransactionCommand.getOrderAmount();
     }
