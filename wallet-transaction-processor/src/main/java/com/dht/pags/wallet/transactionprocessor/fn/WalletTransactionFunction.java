@@ -82,15 +82,19 @@ public class WalletTransactionFunction {
         };
     }
 
-    private TransactionCreatedEventSet updateTransactionCreatedEventList(TransactionCreatedEvent event) {
+    private  TransactionCreatedEventSet getTransactionCreatedEventSet(String walletId){
         ReadOnlyKeyValueStore<String, TransactionCreatedEventSet> keyValueStore = interactiveQueryService.getQueryableStore(STORE_NAME, QueryableStoreTypes.keyValueStore());
-        TransactionCreatedEventSet eventSet = keyValueStore.get(event.getWalletId());
-        if (eventSet == null) {
-            LOGGER.info("Event Store is empty, key=" + event.getWalletId());
-            eventSet = new TransactionCreatedEventSet();
-        } else {
+        return keyValueStore.get(walletId);
+    }
+
+    private TransactionCreatedEventSet updateTransactionCreatedEventList(TransactionCreatedEvent event) {
+        TransactionCreatedEventSet eventSet = getTransactionCreatedEventSet(event.getWalletId());
+        if (eventSet != null) {
             LOGGER.info("Event Store size is " + eventSet.getEventSet().size());
             eventSet.getEventSet().forEach(x -> LOGGER.info(x.toString()));
+        } else {
+            LOGGER.info("Event Store is empty, key=" + event.getWalletId());
+            eventSet = new TransactionCreatedEventSet();
         }
         eventSet.getEventSet().add(event);
         return eventSet;
@@ -106,10 +110,10 @@ public class WalletTransactionFunction {
 
     private boolean validateCreateTransactionCommand(CreateTransactionCommand createTransactionCommand) {
         if (!createTransactionCommand.getTransactionType().isReduce()) {
+
             return true;
         }
-        ReadOnlyKeyValueStore<String, TransactionCreatedEventSet> keyValueStore = interactiveQueryService.getQueryableStore(STORE_NAME, QueryableStoreTypes.keyValueStore());
-        TransactionCreatedEventSet eventSet = keyValueStore.get(createTransactionCommand.getWalletId());
+        TransactionCreatedEventSet eventSet = getTransactionCreatedEventSet(createTransactionCommand.getWalletId());
         return eventSet != null &&
                 eventSet.getEventSet().stream().mapToDouble(TransactionCreatedEvent::getTransactionAmount).sum() >= createTransactionCommand.getOrderAmount();
     }
@@ -127,11 +131,20 @@ public class WalletTransactionFunction {
     }
 
     private BalanceUpdatedEvent createBalanceUpdatedEvent(String id ,CreateTransactionCommand command) {
+        TransactionCreatedEventSet eventSet = getTransactionCreatedEventSet(command.getWalletId());
+        double balance = 0;
+        if (eventSet != null) {
+            LOGGER.info("Event Store size is " + eventSet.getEventSet().size());
+            balance = eventSet.getEventSet().stream().mapToDouble(TransactionCreatedEvent::getTransactionAmount).sum();
+        } else {
+            LOGGER.info("Event Store is empty, key=" + command.getWalletId());
+            balance = command.getOrderAmount();
+        }
         //TODO: Implement logic
         return new BalanceUpdatedEvent(id,
                 command.getOrderAmount(),
                 command.getWalletId(),
-                command.getOrderAmount() * 2
+                balance
         );
     }
 
