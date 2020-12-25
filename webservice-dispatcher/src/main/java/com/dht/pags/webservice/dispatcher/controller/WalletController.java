@@ -19,6 +19,7 @@ import reactor.kafka.sender.KafkaSender;
 import reactor.kafka.sender.SenderRecord;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -56,6 +57,7 @@ public class WalletController {
             wallet.setBalance(new BigDecimal("0.00"));
             wallet.setUpdatetime(System.currentTimeMillis());
             return Mono.just(wallet);
+            new Date().get
         } else {
             return Mono.error(new Exception("User Not Found!"));
         }
@@ -76,15 +78,16 @@ public class WalletController {
                     .doOnError(e -> LOGGER.error("Send failed", e))
                     .subscribe();
 
-            Flux<ReceiverRecord<String, TransactionCreatedEvent>> kafkaFlux = kafkaReceiver.receive();
-            kafkaFlux.filter(x -> x.value().getId().equals(transactionIdFromCommand))
-                    .log()
-                    .doOnNext(r -> r.receiverOffset().acknowledge())
-                    .map(ReceiverRecord::value)
-                    .doOnNext(r -> hander(r))
+            Mono<TransactionCreatedEvent> eventMono = kafkaReceiver.receive()
+                    .filter(x -> x.value().getId().equals(transactionIdFromCommand))
                     .doOnError(e -> LOGGER.error("Receive failed", e))
-                    .subscribe();
+                    .doOnNext((r -> r.receiverOffset().acknowledge()))
+                    .map(ReceiverRecord::value)
+                    .next()
+                    ;
 
+            System.out.println(eventMono.toString());
+            return eventMono;
 //            kafkaFlux.log()
 //                    .doOnNext(r -> r.receiverOffset().acknowledge())
 //                    .map(ReceiverRecord::value)
@@ -99,15 +102,11 @@ public class WalletController {
 //            });
 
 
-            return Mono.just(new TransactionCreatedEvent(command.getTransactionId(), command.getTransactionAmount(),
-                    command.getWalletId(), new Date(), TransactionType.DEPOSIT, command.getDescription()));
+//            return Mono.just(new TransactionCreatedEvent(command.getTransactionId(), command.getTransactionAmount(),
+//                    command.getWalletId(), new Date(), TransactionType.DEPOSIT, command.getDescription()));
         } catch (Exception e) {
             e.printStackTrace();
             return Mono.error(e);
         }
-    }
-
-    public void hander(Object obj) {
-        System.out.println(obj);
     }
 }
