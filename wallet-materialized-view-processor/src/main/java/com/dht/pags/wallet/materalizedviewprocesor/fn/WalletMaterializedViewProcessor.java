@@ -1,5 +1,6 @@
 package com.dht.pags.wallet.materalizedviewprocesor.fn;
 
+import com.dht.pags.wallet.domain.BalanceUpdatedEvent;
 import com.dht.pags.wallet.domain.TransactionCreatedEvent;
 import com.dht.pags.wallet.materalizedviewprocesor.repository.MaterializedViewUpdateService;
 import org.slf4j.Logger;
@@ -20,9 +21,17 @@ public class WalletMaterializedViewProcessor {
 
     @Bean
     public Consumer<TransactionCreatedEvent> walletTransactionToCosmoDbView() {
-        return transactionCreatedEvent -> {
-            LOGGER.info("Received: " + transactionCreatedEvent);
-            materializedViewUpdateService.createItem(transactionCreatedEvent).log().subscribe();
+        return event -> {
+            LOGGER.info("Received: " + event);
+            materializedViewUpdateService.createItem(event).log().subscribe();
+        };
+    }
+
+    @Bean
+    public Consumer<BalanceUpdatedEvent> balanceUpdatedEventToCosmoDbView() {
+        return event -> {
+            LOGGER.info("Received: " + event);
+            materializedViewUpdateService.createItem(event).log().subscribe();
         };
     }
 

@@ -6,10 +6,14 @@ spring:
           binder:
             deserialization-exception-handler: logandcontinue
       function:
-        definition: walletTransactionToCosmoDbView
+        definition: walletTransactionToCosmoDbView;balanceUpdatedEventToCosmoDbView
       bindings:
         walletTransactionToCosmoDbView-in-0:
           destination: wallet.transactionCreatedEvent
+          consumer:
+            nativeDecoding: false
+        logandcontinue-in-0:
+          destination: wallet.balanceUpdatedEvent
           consumer:
             nativeDecoding: false
 application:
