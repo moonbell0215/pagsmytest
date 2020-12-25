@@ -55,6 +55,7 @@ public class KafkaStreamConfig {
         receiverProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS_CONFIG);
         receiverProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         receiverProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        receiverProps.put(JsonDeserializer.TRUSTED_PACKAGES, "com.dht.pags.wallet.domain");
         return new DefaultKafkaReceiver(ConsumerFactory.INSTANCE,
                 ReceiverOptions.<String, TransactionCreatedEvent>create(receiverProps).subscription(Collections.singleton(TOPIC_RECEIVE_EVENT)));
     }

@@ -86,6 +86,6 @@ public class WebController {
         });
 
         return Mono.just(new TransactionCreatedEvent(command.getOrderId(),
-                command.getOrderAmount(),command.getWalletId(),new Date(), TransactionType.DEPOSIT,command.getDescription()));
+                command.getOrderAmount(),command.getWalletId(), System.currentTimeMillis(), TransactionType.DEPOSIT,command.getDescription()));
     }
 }
