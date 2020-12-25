@@ -41,12 +41,12 @@ public class WalletTransactionFunction {
     public static final class BalanceUpdatedEventSerde extends JsonSerde<BalanceUpdatedEvent> {
     }
 
-    public static final String eventStoreName = "TransactionCreatedEventStore";
-
     @Value("${application.topic.name.out-1}")
     private String SUCCESS_TRANSACTION_TOPIC_NAME; //wallet.transactionCreatedEvent
     @Value("${application.topic.name.out-2}")
     private String BALANCE_UPDATED_TOPIC_NAME; //wallet.balanceUpdatedEvent
+    @Value("${application.topic.name.store}")
+    private String STORE_NAME;
 
     public WalletTransactionFunction() {
 
@@ -64,17 +64,17 @@ public class WalletTransactionFunction {
 
             KStream<String, TransactionCreatedEvent> transactionCreatedEventStream = resultKStream
                     .filter((key, event) -> TransactionStatus.SUCCESS.equals(event.getTransactionStatus()))
-                    .map((key, event) -> new KeyValue<>(event.getWalletId(), createTransactionEvent(event.getCommand()))
+                    .map((key, event) -> new KeyValue<>(event.getWalletId(), createTransactionEvent(event,event.getCommand()))
                     );
             transactionCreatedEventStream.to(SUCCESS_TRANSACTION_TOPIC_NAME, Produced.with(Serdes.String(), new TransactionCreatedEventSerde()));
 
             transactionCreatedEventStream
                     .map((key, event) -> new KeyValue<>(event.getWalletId(), updateTransactionCreatedEventList(event)))
-                    .toTable(Materialized.<String, TransactionCreatedEventSet, KeyValueStore<Bytes, byte[]>>as(eventStoreName).withKeySerde(Serdes.String()).withValueSerde(new TransactionCreatedEventSetSerde()));
+                    .toTable(Materialized.<String, TransactionCreatedEventSet, KeyValueStore<Bytes, byte[]>>as(STORE_NAME).withKeySerde(Serdes.String()).withValueSerde(new TransactionCreatedEventSetSerde()));
 
             KStream<String, BalanceUpdatedEvent> balanceUpdatedEventStream = resultKStream
                     .filter((key, event) -> TransactionStatus.SUCCESS.equals(event.getTransactionStatus()))
-                    .map((key, event) -> new KeyValue<>(event.getWalletId(), createBalanceUpdatedEvent(event.getCommand()))
+                    .map((key, event) -> new KeyValue<>(event.getWalletId(), createBalanceUpdatedEvent(event.getId(),event.getCommand()))
                     );
             balanceUpdatedEventStream.to(BALANCE_UPDATED_TOPIC_NAME, Produced.with(Serdes.String(), new BalanceUpdatedEventSerde()));
 
@@ -83,7 +83,7 @@ public class WalletTransactionFunction {
     }
 
     private TransactionCreatedEventSet updateTransactionCreatedEventList(TransactionCreatedEvent event) {
-        ReadOnlyKeyValueStore<String, TransactionCreatedEventSet> keyValueStore = interactiveQueryService.getQueryableStore(eventStoreName, QueryableStoreTypes.keyValueStore());
+        ReadOnlyKeyValueStore<String, TransactionCreatedEventSet> keyValueStore = interactiveQueryService.getQueryableStore(STORE_NAME, QueryableStoreTypes.keyValueStore());
         TransactionCreatedEventSet eventSet = keyValueStore.get(event.getWalletId());
         if (eventSet != null) {
             LOGGER.info("Event Store size is " + eventSet.getEventSet().size());
@@ -108,28 +108,27 @@ public class WalletTransactionFunction {
         if (!createTransactionCommand.getTransactionType().isReduce()) {
             return true;
         }
-
-        ReadOnlyKeyValueStore<String, TransactionCreatedEventSet> keyValueStore = interactiveQueryService.getQueryableStore(eventStoreName, QueryableStoreTypes.keyValueStore());
+        ReadOnlyKeyValueStore<String, TransactionCreatedEventSet> keyValueStore = interactiveQueryService.getQueryableStore(STORE_NAME, QueryableStoreTypes.keyValueStore());
         TransactionCreatedEventSet eventSet = keyValueStore.get(createTransactionCommand.getWalletId());
         return eventSet != null &&
                 eventSet.getEventSet().stream().mapToDouble(TransactionCreatedEvent::getTransactionAmount).sum() >= createTransactionCommand.getOrderAmount();
     }
 
-    private TransactionCreatedEvent createTransactionEvent(CreateTransactionCommand command) {
+    private TransactionCreatedEvent createTransactionEvent(CreateTransactionCommandProcessedEvent processedEvent ,CreateTransactionCommand command) {
         //TODO: Implement logic
-        return new TransactionCreatedEvent(UUID.randomUUID().toString(),
+        return new TransactionCreatedEvent(processedEvent.getId(),
                 command.getOrderId(),
                 command.getOrderAmount(),
                 command.getWalletId(),
-                new Date().getTime(),
+                processedEvent.getTransactionDateTime(),
                 command.getTransactionType(),
                 command.getDescription()
         );
     }
 
-    private BalanceUpdatedEvent createBalanceUpdatedEvent(CreateTransactionCommand command) {
+    private BalanceUpdatedEvent createBalanceUpdatedEvent(String id ,CreateTransactionCommand command) {
         //TODO: Implement logic
-        return new BalanceUpdatedEvent(command.getOrderId(),
+        return new BalanceUpdatedEvent(id,
                 command.getOrderAmount(),
                 command.getWalletId(),
                 command.getOrderAmount() * 2
@@ -139,11 +138,8 @@ public class WalletTransactionFunction {
     private CreateTransactionCommandProcessedEvent createTransactionCommandProcessedEvent(CreateTransactionCommand createTransactionCommand, TransactionStatus transactionStatus) {
         //TODO: Implement logic
         return new CreateTransactionCommandProcessedEvent(
-                //TODO-暫時使用createTransactionCommand.getWalletId() + createTransactionCommand.getOrderId()
-                //state store . Key = wallet Id . Value list <TransactionCreatedEvent>
-                //數一下list size 就知道下一個sequence
-                //開發中
-                createTransactionCommand.getWalletId() + "-" + createTransactionCommand.getOrderId(),
+                //TODO-暫時使用UUID.randomUUID().toString()
+                UUID.randomUUID().toString(),
                 createTransactionCommand.getOrderAmount(),
                 createTransactionCommand.getOrderId(),
                 createTransactionCommand.getWalletId(),
