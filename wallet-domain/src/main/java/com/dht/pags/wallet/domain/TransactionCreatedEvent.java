@@ -1,27 +1,42 @@
 package com.dht.pags.wallet.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Date;
-
 public class TransactionCreatedEvent {
-    private final String id;
+    /**
+     * 本次交易ID  成功才會有交易ID
+     */
+    private final String transactionId;
+    /**
+     * 本次交易金額
+     */
     private final double transactionAmount;
+    /**
+     * 會員錢包id
+     */
     private final String walletId;
+    /**
+     * 交易時間
+     */
     private final long transactionDateTime;
+    /**
+     * 交易類別
+     */
     private final TransactionType transactionType;
+    /**
+     * 交易說明
+     */
     private final String description;
 
     @JsonCreator
-    public TransactionCreatedEvent(@JsonProperty("id") String id,
+    public TransactionCreatedEvent(@JsonProperty("transactionId") String transactionId,
                                    @JsonProperty("transactionAmount") double transactionAmount,
                                    @JsonProperty("walletId") String walletId,
                                    @JsonProperty("transactionDateTime") long transactionDateTime,
                                    @JsonProperty("transactionType") TransactionType transactionType,
                                    @JsonProperty("description") String description) {
-        this.id = id;
+        this.transactionId = transactionId;
         this.transactionAmount = transactionAmount;
         this.walletId = walletId;
         this.transactionDateTime = transactionDateTime;
@@ -29,8 +44,8 @@ public class TransactionCreatedEvent {
         this.description = description;
     }
 
-    public String getId() {
-        return id;
+    public String getTransactionId() {
+        return transactionId;
     }
 
     public double getTransactionAmount() {
@@ -56,7 +71,7 @@ public class TransactionCreatedEvent {
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("TransactionCreatedEvent{");
-        sb.append("id='").append(id).append('\'');
+        sb.append("transactionId='").append(transactionId).append('\'');
         sb.append(", transactionAmount=").append(transactionAmount);
         sb.append(", walletId='").append(walletId).append('\'');
         sb.append(", transactionDateTime=").append(transactionDateTime);

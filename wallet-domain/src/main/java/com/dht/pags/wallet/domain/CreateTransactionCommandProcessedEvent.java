@@ -7,12 +7,33 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Date;
 
 public class CreateTransactionCommandProcessedEvent {
+    /**
+     * 本次交易ID  成功才會有交易ID
+     */
     private final String transactionId;
+    /**
+     * 本次交易金額
+     */
     private final double transactionAmount;
+    /**
+     * 交易錢包ID ，(會員ID)
+     */
     private final String walletId;
+    /**
+     * 交易時間
+     */
     private final long transactionDateTime;
+    /**
+     * 交易類別
+     */
     private final TransactionType transactionType;
+    /**
+     * 交易說明
+     */
     private final String description;
+    /**
+     * 交易狀態
+     */
     private final TransactionStatus transactionStatus;
 
     @JsonCreator
