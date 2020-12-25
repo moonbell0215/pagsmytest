@@ -83,6 +83,7 @@ public class WalletTransactionFunction {
     private TransactionCreatedEvent createTransactionEvent(CreateTransactionCommandProcessedEvent createTransactionCommandProcessedEvent) {
         //TODO: Implement logic
         return new TransactionCreatedEvent(createTransactionCommandProcessedEvent.getTransactionId(),
+                createTransactionCommandProcessedEvent.getOrderId(),
                 createTransactionCommandProcessedEvent.getTransactionAmount(),
                 createTransactionCommandProcessedEvent.getWalletId(),
                 createTransactionCommandProcessedEvent.getTransactionDateTime(),
@@ -105,6 +106,11 @@ public class WalletTransactionFunction {
         //TODO: Implement logic
         return new CreateTransactionCommandProcessedEvent(createTransactionCommand.getOrderId(),
                 createTransactionCommand.getOrderAmount(),
+                //TODO-暫時使用createTransactionCommand.getWalletId() + createTransactionCommand.getOrderId()
+                //state store . Key = wallet Id . Value list <TransactionCreatedEvent>
+                //數一下list size 就知道下一個sequence
+                //開發中
+                createTransactionCommand.getWalletId()+"-"+createTransactionCommand.getOrderId(),
                 createTransactionCommand.getWalletId(),
                 System.currentTimeMillis(),
                 createTransactionCommand.getTransactionType(),

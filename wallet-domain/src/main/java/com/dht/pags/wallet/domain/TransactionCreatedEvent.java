@@ -9,6 +9,10 @@ public class TransactionCreatedEvent {
      */
     private final String transactionId;
     /**
+     * 會員訂單編號
+     */
+    private final String orderId;
+    /**
      * 本次交易金額
      */
     private final double transactionAmount;
@@ -31,12 +35,14 @@ public class TransactionCreatedEvent {
 
     @JsonCreator
     public TransactionCreatedEvent(@JsonProperty("transactionId") String transactionId,
+                                   @JsonProperty("orderId") String orderId,
                                    @JsonProperty("transactionAmount") double transactionAmount,
                                    @JsonProperty("walletId") String walletId,
                                    @JsonProperty("transactionDateTime") long transactionDateTime,
                                    @JsonProperty("transactionType") TransactionType transactionType,
                                    @JsonProperty("description") String description) {
         this.transactionId = transactionId;
+        this.orderId = orderId;
         this.transactionAmount = transactionAmount;
         this.walletId = walletId;
         this.transactionDateTime = transactionDateTime;
@@ -47,6 +53,8 @@ public class TransactionCreatedEvent {
     public String getTransactionId() {
         return transactionId;
     }
+
+    public String getOrderId() { return orderId; }
 
     public double getTransactionAmount() {
         return transactionAmount;
@@ -72,6 +80,7 @@ public class TransactionCreatedEvent {
     public String toString() {
         final StringBuffer sb = new StringBuffer("TransactionCreatedEvent{");
         sb.append("transactionId='").append(transactionId).append('\'');
+        sb.append(", orderId='").append(orderId).append('\'');
         sb.append(", transactionAmount=").append(transactionAmount);
         sb.append(", walletId='").append(walletId).append('\'');
         sb.append(", transactionDateTime=").append(transactionDateTime);

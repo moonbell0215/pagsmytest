@@ -1,10 +1,7 @@
 package com.dht.pags.wallet.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.Date;
 
 public class CreateTransactionCommandProcessedEvent {
     /**
@@ -15,6 +12,10 @@ public class CreateTransactionCommandProcessedEvent {
      * 本次交易金額
      */
     private final double transactionAmount;
+    /**
+     * 會員訂單編號
+     */
+    private final String orderId;
     /**
      * 交易錢包ID ，(會員ID)
      */
@@ -39,6 +40,7 @@ public class CreateTransactionCommandProcessedEvent {
     @JsonCreator
     public CreateTransactionCommandProcessedEvent(@JsonProperty("transactionId") String transactionId,
                                                   @JsonProperty("transactionAmount") double transactionAmount,
+                                                  @JsonProperty("orderId") String orderId,
                                                   @JsonProperty("walletId") String walletId,
                                                   @JsonProperty("transactionDateTime") long transactionDateTime,
                                                   @JsonProperty("transactionType") TransactionType transactionType,
@@ -46,6 +48,7 @@ public class CreateTransactionCommandProcessedEvent {
                                                   @JsonProperty("transactionStatus") TransactionStatus transactionStatus) {
         this.transactionId = transactionId;
         this.transactionAmount = transactionAmount;
+        this.orderId = orderId;
         this.walletId = walletId;
         this.transactionDateTime = transactionDateTime;
         this.transactionType = transactionType;
@@ -64,6 +67,8 @@ public class CreateTransactionCommandProcessedEvent {
     public String getWalletId() {
         return walletId;
     }
+
+    public String getOrderId() { return orderId; }
 
     public long getTransactionDateTime() {
         return transactionDateTime;
@@ -84,6 +89,7 @@ public class CreateTransactionCommandProcessedEvent {
         final StringBuffer sb = new StringBuffer("CreateTransactionCommandProcessedEvent{");
         sb.append("transactionId='").append(transactionId).append('\'');
         sb.append(", transactionAmount=").append(transactionAmount);
+        sb.append(", orderId='").append(orderId).append('\'');
         sb.append(", walletId='").append(walletId).append('\'');
         sb.append(", transactionDateTime=").append(transactionDateTime);
         sb.append(", transactionType=").append(transactionType);
