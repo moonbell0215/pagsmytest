@@ -12,7 +12,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.support.serializer.JsonSerde;
 import org.springframework.stereotype.Service;
 
-import java.util.function.BiFunction;
+import java.util.Date;
+import java.util.UUID;
+import java.util.function.Function;
 
 @Service
 public class WalletTransactionFunction {
@@ -24,84 +26,74 @@ public class WalletTransactionFunction {
     private String SUCCESS_TRANSACTION_TOPIC_NAME; //wallet.transactionCreatedEvent
     @Value("${application.topic.name.out-2}")
     private String BALANCE_UPDATED_TOPIC_NAME; //wallet.balanceUpdatedEvent
+
     @Bean
-    public BiFunction<KStream<String, CreateTransactionCommand>,
-            KStream<String, TransactionCreatedEvent>,
-            KStream<String, CreateTransactionCommandProcessedEvent>> createTransactionCommandHandler() {
-        return (stringCreateTransactionCommandKStream,transactionCreatedEventKStream) -> {
+    public Function<KStream<String, CreateTransactionCommand>,
+                KStream<String, CreateTransactionCommandProcessedEvent>> createTransactionCommandHandler() {
+        return (commandKStream) -> {
+            commandKStream.peek((key, value) -> LOGGER.info(value.toString()));
 
+            KStream<String, TransactionCreatedEvent> transactionCreatedEventStream =
+                    commandKStream.filter((key, value) -> validateCreateTransactionCommand(value))
+                    .map((key, command) -> new KeyValue<>(key, createTransactionEvent(command))
+                    );
+            transactionCreatedEventStream.to(SUCCESS_TRANSACTION_TOPIC_NAME,Produced.with(Serdes.String(),new TransactionCreatedEventSerde()));
 
-            KStream<String, CreateTransactionCommandProcessedEvent> createTransactionCommandProcessedEventKStream =
-                    stringCreateTransactionCommandKStream.peek((k, v) -> LOGGER.info("CreateTransactionCommand: " + v))
-                            // out -> wallet.createTransactionCommandProcessedEvent 申請帳變記錄 ->CreateTransactionCommandProcessedEvent
-                            .map((key, create) -> new KeyValue<>(key, validateAndCreateTransactionCreatedEvent(create)));
+            KStream<String, BalanceUpdatedEvent> balanceUpdatedEventStream =
+                    commandKStream.filter((key, value) -> validateCreateTransactionCommand(value))
+                            .map((key, command) -> new KeyValue<>(key, createBalanceUpdatedEvent(command))
+                            );
+            balanceUpdatedEventStream.to(BALANCE_UPDATED_TOPIC_NAME,Produced.with(Serdes.String(),new BalanceUpdatedEventSerde()));
 
-            //out -> wallet.transactionCreatedEvent 帳變交易記錄 -> TransactionCreatedEvent
-            createTransactionCommandProcessedEventKStream
-                    .filter((key, processedEvent) -> TransactionStatus.SUCCESS.equals(processedEvent.getTransactionStatus()))
-                    .map((key, create) -> new KeyValue<>(key, createTransactionEvent(create)))
-                    .peek((k, v) -> LOGGER.info("transactionCreatedEvent: " + v))
-                    .to(SUCCESS_TRANSACTION_TOPIC_NAME, Produced.with(Serdes.String(), new TransactionCreatedEventSerde()))
-            ;
+            KStream<String, CreateTransactionCommandProcessedEvent> result =
+                    commandKStream.map((key, command) -> new KeyValue<>(key, validateAndCreateTransactionCreatedEvent(command))
+                    );
 
-            //out -> wallet.balanceUpdatedEvent 餘額記錄 -> BalanceUpdatedEvent
-            //會在wallet.transactionCreatedEvent有輸出後，才會觸發此項
-            transactionCreatedEventKStream.peek((k, v) -> LOGGER.info("balanceUpdatedEvent: " + v))
-                    .map((key, create) -> new KeyValue<>(key, createBalanceUpdatedEvent(create)))
-                    .to(BALANCE_UPDATED_TOPIC_NAME, Produced.with(Serdes.String(), new BalanceUpdatedEventSerde()));
-
-            //in  -> wallet.createTransactionCommand  輸入申請帳變 -> CreateTransactionCommand
-            return createTransactionCommandProcessedEventKStream.peek((k, v) -> LOGGER.info("createTransactionCommandProcessedEventKStream: " + v));
+            return result;
         };
     }
-//    @Bean
-//    public Function<KStream<String, CreateTransactionCommand>, KStream<String, TransactionCreatedEvent>> createTransactionCommandHandler() {
-//        return input -> input
-//                .map((key, createTransactionCommand) -> new KeyValue(key, validateAndCreateTransactionCreatedEvent(createTransactionCommand)));
-//    }
 
     private CreateTransactionCommandProcessedEvent validateAndCreateTransactionCreatedEvent(CreateTransactionCommand createTransactionCommand) {
         if (this.validateCreateTransactionCommand(createTransactionCommand)) {
-            return createTransactionCommandProcessedEvent(createTransactionCommand,TransactionStatus.SUCCESS);
+            return createTransactionCommandProcessedEvent(createTransactionCommand, TransactionStatus.SUCCESS);
         }
         //TODO : Return error
-        return createTransactionCommandProcessedEvent(createTransactionCommand,TransactionStatus.FAILURE);
+        return createTransactionCommandProcessedEvent(createTransactionCommand, TransactionStatus.FAILURE);
     }
 
     private boolean validateCreateTransactionCommand(CreateTransactionCommand createTransactionCommand) {
         //TODO: Implement validation logic
         //SUCCESS orderAmount 大於 100
-        if(createTransactionCommand.getOrderAmount() >100 ){
+        if (createTransactionCommand.getOrderAmount() > 100) {
             return true;
-        }else{
-        //test FAILURE orderAmount 小於等於 100
+        } else {
+            //test FAILURE orderAmount 小於等於 100
             return false;
         }
 
     }
 
-    private TransactionCreatedEvent createTransactionEvent(CreateTransactionCommandProcessedEvent createTransactionCommandProcessedEvent) {
+    private TransactionCreatedEvent createTransactionEvent(CreateTransactionCommand command) {
         //TODO: Implement logic
-        return new TransactionCreatedEvent(createTransactionCommandProcessedEvent.getId(),
-                createTransactionCommandProcessedEvent.getOrderId(),
-                createTransactionCommandProcessedEvent.getTransactionAmount(),
-                createTransactionCommandProcessedEvent.getWalletId(),
-                createTransactionCommandProcessedEvent.getTransactionDateTime(),
-                createTransactionCommandProcessedEvent.getTransactionType(),
-                "Note by event:" + createTransactionCommandProcessedEvent.getDescription()
+        return new TransactionCreatedEvent(UUID.randomUUID().toString(),
+                command.getOrderId(),
+                command.getOrderAmount(),
+                command.getWalletId(),
+                new Date().getTime(),
+                command.getTransactionType(),
+                command.getDescription()
         );
     }
 
-    private BalanceUpdatedEvent createBalanceUpdatedEvent(TransactionCreatedEvent transactionCreatedEvent) {
+    private BalanceUpdatedEvent createBalanceUpdatedEvent(CreateTransactionCommand command) {
         //TODO: Implement logic
-        return new BalanceUpdatedEvent(transactionCreatedEvent.getId(),
-                transactionCreatedEvent.getTransactionAmount(),
-                transactionCreatedEvent.getWalletId(),
-                transactionCreatedEvent.getTransactionAmount()
-                //TODO- 測試 ，先用TransactionAmount 的值
-                //暫時還沒有記錄balance
+        return new BalanceUpdatedEvent(command.getOrderId(),
+                command.getOrderAmount(),
+                command.getWalletId(),
+                command.getOrderAmount() * 2
         );
     }
+
     private CreateTransactionCommandProcessedEvent createTransactionCommandProcessedEvent(CreateTransactionCommand createTransactionCommand, TransactionStatus transactionStatus) {
         //TODO: Implement logic
         return new CreateTransactionCommandProcessedEvent(
@@ -109,7 +101,7 @@ public class WalletTransactionFunction {
                 //state store . Key = wallet Id . Value list <TransactionCreatedEvent>
                 //數一下list size 就知道下一個sequence
                 //開發中
-                createTransactionCommand.getWalletId()+"-"+createTransactionCommand.getOrderId(),
+                createTransactionCommand.getWalletId() + "-" + createTransactionCommand.getOrderId(),
                 createTransactionCommand.getOrderAmount(),
                 createTransactionCommand.getOrderId(),
                 createTransactionCommand.getWalletId(),
