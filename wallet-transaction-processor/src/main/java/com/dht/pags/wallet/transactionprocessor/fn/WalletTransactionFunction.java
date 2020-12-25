@@ -33,16 +33,20 @@ public class WalletTransactionFunction {
         return (commandKStream) -> {
             commandKStream.peek((key, value) -> LOGGER.info(value.toString()));
 
-            KStream<String, TransactionCreatedEvent> transactionCreatedEventStream =
-                    commandKStream.filter((key, value) -> validateCreateTransactionCommand(value))
-                    .map((key, command) -> new KeyValue<>(key, createTransactionEvent(command))
+            KStream<String, CreateTransactionCommandProcessedEvent> resultKStream =
+                    commandKStream.map((key, command) -> new KeyValue<>(key, validateAndCreateTransactionCreatedEvent(command))
+                    );
+
+            KStream<String, TransactionCreatedEvent> transactionCreatedEventStream = resultKStream
+                    .filter((key, value) -> TransactionStatus.SUCCESS.equals(value.getTransactionStatus()))
+                    .map((key, event) -> new KeyValue<>(key, createTransactionEvent(event.getCommand()))
                     );
             transactionCreatedEventStream.to(SUCCESS_TRANSACTION_TOPIC_NAME,Produced.with(Serdes.String(),new TransactionCreatedEventSerde()));
 
-            KStream<String, BalanceUpdatedEvent> balanceUpdatedEventStream =
-                    commandKStream.filter((key, value) -> validateCreateTransactionCommand(value))
-                            .map((key, command) -> new KeyValue<>(key, createBalanceUpdatedEvent(command))
-                            );
+            KStream<String, BalanceUpdatedEvent> balanceUpdatedEventStream = resultKStream
+                    .filter((key, value) -> TransactionStatus.SUCCESS.equals(value.getTransactionStatus()))
+                    .map((key, event) -> new KeyValue<>(key, createBalanceUpdatedEvent(event.getCommand()))
+                    );
             balanceUpdatedEventStream.to(BALANCE_UPDATED_TOPIC_NAME,Produced.with(Serdes.String(),new BalanceUpdatedEventSerde()));
 
             KStream<String, CreateTransactionCommandProcessedEvent> result =
@@ -108,6 +112,6 @@ public class WalletTransactionFunction {
                 System.currentTimeMillis(),
                 createTransactionCommand.getTransactionType(),
                 "Note by event:" + createTransactionCommand.getDescription(),
-                transactionStatus);
+                transactionStatus, createTransactionCommand);
     }
 }

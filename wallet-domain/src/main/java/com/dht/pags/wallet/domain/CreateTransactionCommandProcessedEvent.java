@@ -1,7 +1,10 @@
 package com.dht.pags.wallet.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.beans.Transient;
 
 public class CreateTransactionCommandProcessedEvent {
     /**
@@ -37,6 +40,8 @@ public class CreateTransactionCommandProcessedEvent {
      */
     private final TransactionStatus transactionStatus;
 
+    private final transient CreateTransactionCommand command;
+
     @JsonCreator
     public CreateTransactionCommandProcessedEvent(@JsonProperty("id") String id,
                                                   @JsonProperty("transactionAmount") double transactionAmount,
@@ -45,7 +50,7 @@ public class CreateTransactionCommandProcessedEvent {
                                                   @JsonProperty("transactionDateTime") long transactionDateTime,
                                                   @JsonProperty("transactionType") TransactionType transactionType,
                                                   @JsonProperty("description") String description,
-                                                  @JsonProperty("transactionStatus") TransactionStatus transactionStatus) {
+                                                  @JsonProperty("transactionStatus") TransactionStatus transactionStatus, CreateTransactionCommand command) {
         this.id = id;
         this.transactionAmount = transactionAmount;
         this.orderId = orderId;
@@ -54,6 +59,8 @@ public class CreateTransactionCommandProcessedEvent {
         this.transactionType = transactionType;
         this.description = description;
         this.transactionStatus = transactionStatus;
+
+        this.command = command;
     }
 
     public String getId() {
@@ -83,6 +90,12 @@ public class CreateTransactionCommandProcessedEvent {
     }
 
     public TransactionStatus getTransactionStatus() { return transactionStatus; }
+
+    @JsonIgnore
+    @Transient
+    public CreateTransactionCommand getCommand() {
+        return command;
+    }
 
     @Override
     public String toString() {
