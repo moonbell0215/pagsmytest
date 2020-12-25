@@ -8,6 +8,7 @@ spring:
       function:
         definition: createTransactionCommandHandler
       bindings:
+#        主要輸入
         createTransactionCommandHandler-in-0:
           destination: wallet.createTransactionCommand
           consumer:
@@ -17,6 +18,6 @@ spring:
           consumer:
             nativeDecoding: false
         createTransactionCommandHandler-out-0:
-          destination: wallet.transactionCreatedEvent
+          destination: wallet.createTransactionCommandProcessedEvent
           consumer:
             nativeDecoding: false

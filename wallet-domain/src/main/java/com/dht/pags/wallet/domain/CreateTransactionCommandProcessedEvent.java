@@ -14,6 +14,7 @@ public class CreateTransactionCommandProcessedEvent {
     private final Date transactionDateTime;
     private final TransactionType transactionType;
     private final String description;
+    private final TransactionStatus transactionStatus;
 
     @JsonCreator
     public CreateTransactionCommandProcessedEvent(@JsonProperty("transactionId") String transactionId,
@@ -21,13 +22,15 @@ public class CreateTransactionCommandProcessedEvent {
                                                   @JsonProperty("walletId") String walletId,
                                                   @JsonProperty("transactionDateTime") Date transactionDateTime,
                                                   @JsonProperty("transactionType") TransactionType transactionType,
-                                                  @JsonProperty("description") String description) {
+                                                  @JsonProperty("description") String description,
+                                                  @JsonProperty("transactionStatus") TransactionStatus transactionStatus) {
         this.transactionId = transactionId;
         this.transactionAmount = transactionAmount;
         this.walletId = walletId;
         this.transactionDateTime = transactionDateTime;
         this.transactionType = transactionType;
         this.description = description;
+        this.transactionStatus = transactionStatus;
     }
 
     public String getTransactionId() {
@@ -54,15 +57,19 @@ public class CreateTransactionCommandProcessedEvent {
         return description;
     }
 
+    public TransactionStatus getTransactionStatus() { return transactionStatus; }
+
     @Override
     public String toString() {
-        return "CreateTransactionCommandProcessedEvent{" +
-                "transactionId='" + transactionId + '\'' +
-                ", transactionAmount=" + transactionAmount +
-                ", walletId='" + walletId + '\'' +
-                ", transactionDateTime=" + transactionDateTime +
-                ", transactionType=" + transactionType +
-                ", description='" + description + '\'' +
-                '}';
+        final StringBuffer sb = new StringBuffer("CreateTransactionCommandProcessedEvent{");
+        sb.append("transactionId='").append(transactionId).append('\'');
+        sb.append(", transactionAmount=").append(transactionAmount);
+        sb.append(", walletId='").append(walletId).append('\'');
+        sb.append(", transactionDateTime=").append(transactionDateTime);
+        sb.append(", transactionType=").append(transactionType);
+        sb.append(", description='").append(description).append('\'');
+        sb.append(", transactionStatus=").append(transactionStatus);
+        sb.append('}');
+        return sb.toString();
     }
 }
