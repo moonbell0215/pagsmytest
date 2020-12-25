@@ -4,7 +4,6 @@ import com.azure.cosmos.*;
 import com.azure.cosmos.models.CosmosContainerProperties;
 import com.azure.cosmos.models.CosmosItemResponse;
 import com.dht.pags.wallet.domain.BalanceUpdatedEvent;
-import com.dht.pags.wallet.domain.TransactionCreatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
