@@ -47,9 +47,6 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
-          
-    - upload: $(Pipeline.Workspace)/webservice-dispatcher/manifests
-      artifact: $(Pipeline.Workspace)/webservice-dispatcher/manifests
 
 - stage: Deploy
   displayName: Deploy stage
