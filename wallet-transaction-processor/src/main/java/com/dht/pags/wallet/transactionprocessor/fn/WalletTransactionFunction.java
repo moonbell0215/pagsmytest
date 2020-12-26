@@ -122,20 +122,25 @@ public class WalletTransactionFunction {
 
     private BalanceUpdatedEvent createBalanceUpdatedEvent(String id, CreateTransactionCommand command) {
         TransactionCreatedEventSet eventSet = getTransactionCreatedEventSetFromStateStore(command.getWalletId());
+        double beforeBalance = 0;
         double balance = 0;
+
         if (eventSet != null) {
             LOGGER.info("Event Store size is " + eventSet.getEventSet().size());
-            balance = eventSet.getEventSet().stream().mapToDouble(TransactionCreatedEvent::getTransactionAmount).sum();
+            beforeBalance = eventSet.getEventSet().stream().mapToDouble(TransactionCreatedEvent::getTransactionAmount).sum();
+            balance = beforeBalance + command.getOrderAmount();
+
         } else {
             LOGGER.info("Event Store is empty, key=" + command.getWalletId());
             balance = command.getOrderAmount();
         }
+        LOGGER.info(" key= "+command.getWalletId()+" ,beforeBalance= " + beforeBalance +" , balance= "+balance);
         //TODO: Implement logic
         return new BalanceUpdatedEvent(id,
                 command.getOrderAmount(),
                 command.getWalletId(),
-                balance
-        );
+                balance,
+                beforeBalance);
     }
 
     private CreateTransactionCommandProcessedEvent createTransactionCommandProcessedEvent(CreateTransactionCommand createTransactionCommand, TransactionStatus transactionStatus) {
