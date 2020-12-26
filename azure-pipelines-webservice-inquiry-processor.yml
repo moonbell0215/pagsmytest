@@ -2,8 +2,19 @@
 # Build and push image to Azure Container Registry; Deploy to Azure Kubernetes Service
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
+# specific path build
 trigger:
-- main
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - webservice-inquiry-processor
+      - wallet-domain
+    exclude:
+      - wallet-transaction-processor
+      - wallet-materialized-view-processor
+      - webservice-dispatcher
 
 resources:
 - repo: self

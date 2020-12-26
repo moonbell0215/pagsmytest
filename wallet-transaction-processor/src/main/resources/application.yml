@@ -5,6 +5,7 @@ spring:
         streams:
           binder:
             deserialization-exception-handler: logandcontinue
+            application-id: wallet-transaction-processor
       function:
         definition: createTransactionCommandHandler
       bindings:

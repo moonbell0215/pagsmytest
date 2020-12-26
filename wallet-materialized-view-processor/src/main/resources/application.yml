@@ -5,6 +5,7 @@ spring:
         streams:
           binder:
             deserialization-exception-handler: logandcontinue
+            application-id: wallet-materialized-view-processor
       function:
         definition: walletTransactionToCosmoDbView;balanceUpdatedEventToCosmoDbView
       bindings:
