@@ -148,9 +148,17 @@ public class WalletTransactionFunction {
 
     private CreateTransactionCommandProcessedEvent createTransactionCommandProcessedEvent(CreateTransactionCommand createTransactionCommand, TransactionStatus transactionStatus) {
         //TODO: Implement logic
+        TransactionCreatedEventSet eventSet = getTransactionCreatedEventSetFromStateStore(createTransactionCommand.getWalletId());
+        String id = createTransactionCommand.getWalletId();
+        if (eventSet != null) {
+            LOGGER.info("Event Store size is " + eventSet.getEventSet().size());
+            id +=  "-" +(eventSet.getEventSet().size() +1);
+        } else {
+            id += "-1";
+        }
+
         return new CreateTransactionCommandProcessedEvent(
-                //TODO-暫時使用UUID.randomUUID().toString()
-                UUID.randomUUID().toString(),
+                id,
                 createTransactionCommand.getOrderAmount(),
                 createTransactionCommand.getOrderId(),
                 createTransactionCommand.getWalletId(),
