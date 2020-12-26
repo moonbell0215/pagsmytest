@@ -1,0 +1,21 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: walletmaterializedviewprocessor 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: walletmaterializedviewprocessor
+  template:
+    metadata:
+      labels:
+        app: walletmaterializedviewprocessor 
+    spec:
+      containers:
+        - name: walletmaterializedviewprocessor 
+          image: dhtpags.azurecr.io/walletmaterializedviewprocessor
+          envFrom:
+            - configMapRef:
+                name: pags-common
+      restartPolicy: Always

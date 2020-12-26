@@ -1,0 +1,23 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: webserviceinquiryprocessor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webserviceinquiryprocessor
+  template:
+    metadata:
+      labels:
+        app: webserviceinquiryprocessor
+    spec:
+      containers:
+        - name: webserviceinquiryprocessor
+          image: dhtpags.azurecr.io/webserviceinquiryprocessor
+          envFrom:
+            - configMapRef:
+                name: pags-common
+          ports:
+          - containerPort: 8080
+      restartPolicy: Always
