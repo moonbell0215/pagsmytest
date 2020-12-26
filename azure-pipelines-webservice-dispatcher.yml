@@ -48,6 +48,10 @@ stages:
         tags: |
           $(tag)
 
+    - publish: webservice-dispatcher/manifests
+      artifact: manifests
+      displayName: webservice-dispatcher k8s manifests
+
 - stage: Deploy
   displayName: Deploy stage
   dependsOn: Build
