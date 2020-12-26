@@ -15,5 +15,9 @@ spec:
       containers:
         - name: webservicedispatcher 
           image: dhtpags.azurecr.io/webservicedispatcher
+          envFrom:
+            - configMapRef:
+                name: pags-common
           ports:
           - containerPort: 8080
+      restartPolicy: Always
