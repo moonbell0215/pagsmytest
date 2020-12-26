@@ -66,6 +66,8 @@ stages:
       runOnce:
         deploy:
           steps:
+          - download: current
+            artifact: manifests
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
             inputs:
@@ -78,8 +80,8 @@ stages:
             inputs:
               action: deploy
               manifests: |
-                $(Pipeline.Workspace)/webservice-dispatcher/manifests/deployment.yml
-                $(Pipeline.Workspace)/webservice-dispatcher/manifests/service.yml
+                $(Pipeline.Workspace)/manifests/deployment.yml
+                $(Pipeline.Workspace)/manifests/service.yml
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
