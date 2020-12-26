@@ -34,7 +34,7 @@ stages:
     - task: Gradle@2
       inputs:
         gradleWrapperFile: 'gradlew'
-        tasks: 'build'
+        tasks: 'webservice-dispatcher:build'
         publishJUnitResults: false
         javaHomeOption: 'JDKVersion'
         sonarQubeRunAnalysis: false
