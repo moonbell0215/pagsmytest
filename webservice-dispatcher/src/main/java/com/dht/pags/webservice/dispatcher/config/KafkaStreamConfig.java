@@ -2,10 +2,13 @@ package com.dht.pags.webservice.dispatcher.config;
 
 import com.dht.pags.wallet.domain.CreateTransactionCommand;
 import com.dht.pags.wallet.domain.TransactionCreatedEvent;
+import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
@@ -29,7 +32,16 @@ import java.util.Map;
 @Configuration
 @SuppressWarnings("unchecked")
 public class KafkaStreamConfig {
-    private static final String BOOTSTRAP_SERVERS_CONFIG = "localhost:9092";
+    @Value("${spring.kafka.properties.bootstrap.servers}")
+    private String BOOTSTRAP_SERVERS_CONFIG;
+
+    @Value("${spring.kafka.properties.sasl.mechanism}")
+    private String SASL_MECHANISM;
+    @Value("${spring.kafka.properties.sasl.jaas.config}")
+    private String SASL_JAAS_CONFIG;
+    @Value("${spring.kafka.properties.security.protocol}")
+    private String SECURITY_PROTOCOL_CONFIG;
+
     private static final String GROUP_ID_CONFIG = "webservice-dispatcher-consumer";
     private static final String CLIENT_ID_CONFIG = "webservice-dispatcher-consumer-client";
     /**
@@ -43,6 +55,10 @@ public class KafkaStreamConfig {
         senderProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         senderProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         senderProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS_CONFIG);
+        senderProps.put(SaslConfigs.SASL_MECHANISM, SASL_MECHANISM);
+        senderProps.put(SaslConfigs.SASL_JAAS_CONFIG, SASL_JAAS_CONFIG);
+        senderProps.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SECURITY_PROTOCOL_CONFIG);
+
         return new DefaultKafkaSender(ProducerFactory.INSTANCE,
                 SenderOptions.<String, CreateTransactionCommand>create(senderProps));
     }
@@ -55,6 +71,9 @@ public class KafkaStreamConfig {
         receiverProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS_CONFIG);
         receiverProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         receiverProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        receiverProps.put(SaslConfigs.SASL_MECHANISM, SASL_MECHANISM);
+        receiverProps.put(SaslConfigs.SASL_JAAS_CONFIG, SASL_JAAS_CONFIG);
+        receiverProps.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SECURITY_PROTOCOL_CONFIG);
         receiverProps.put(JsonDeserializer.TRUSTED_PACKAGES, "com.dht.pags.wallet.domain");
         return new DefaultKafkaReceiver(ConsumerFactory.INSTANCE,
                 ReceiverOptions.<String, TransactionCreatedEvent>create(receiverProps).subscription(Collections.singleton(TOPIC_RECEIVE_EVENT)));
