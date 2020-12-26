@@ -48,8 +48,8 @@ stages:
         tags: |
           $(tag)
           
-    - upload: manifests
-      artifact: manifests
+    - upload: $(Pipeline.Workspace)/webservice-dispatcher/manifests
+      artifact: $(Pipeline.Workspace)/webservice-dispatcher/manifests
 
 - stage: Deploy
   displayName: Deploy stage
