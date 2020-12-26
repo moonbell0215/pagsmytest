@@ -5,9 +5,7 @@ import com.dht.pags.wallet.transactionprocessor.domain.TransactionCreatedEventSe
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.Materialized;
-import org.apache.kafka.streams.kstream.Produced;
+import org.apache.kafka.streams.kstream.*;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
@@ -20,6 +18,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.support.serializer.JsonSerde;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
@@ -66,17 +66,20 @@ public class WalletTransactionFunction {
                     .filter((key, event) -> TransactionStatus.SUCCESS.equals(event.getTransactionStatus()))
                     .map((key, event) -> new KeyValue<>(event.getWalletId(), createTransactionEvent(event, event.getCommand()))
                     );
-            transactionCreatedEventStream.to(SUCCESS_TRANSACTION_TOPIC_NAME, Produced.with(Serdes.String(), new TransactionCreatedEventSerde()));
 
-            transactionCreatedEventStream
-                    .map((key, event) -> new KeyValue<>(event.getWalletId(), updateTransactionCreatedEventList(event)))
-                    .toTable(Materialized.<String, TransactionCreatedEventSet, KeyValueStore<Bytes, byte[]>>as(STORE_NAME).withKeySerde(Serdes.String()).withValueSerde(new TransactionCreatedEventSetSerde()));
+            //Balance Update 必須發生在 TransactionCreatedEvent publish到Kafka及state store 前,否則有不確定性
+            KStream balanceUpdatedEventStreamAndTransactionCreatedEventStream = transactionCreatedEventStream
+                    .flatMap((key, event) -> {
+                        List result = new ArrayList<>();
+                        result.add(new KeyValue(event.getWalletId(), createBalanceUpdatedEvent(event)));
+                        result.add(new KeyValue(event.getWalletId(),event));
+                        result.add(new KeyValue(event.getWalletId(),updateTransactionCreatedEventList(event)));
+                        return result;
+                    });
 
-            KStream<String, BalanceUpdatedEvent> balanceUpdatedEventStream = resultKStream
-                    .filter((key, event) -> TransactionStatus.SUCCESS.equals(event.getTransactionStatus()))
-                    .map((key, event) -> new KeyValue<>(event.getWalletId(), createBalanceUpdatedEvent(event.getId(), event.getCommand()))
-                    );
-            balanceUpdatedEventStream.to(BALANCE_UPDATED_TOPIC_NAME, Produced.with(Serdes.String(), new BalanceUpdatedEventSerde()));
+            balanceUpdatedEventStreamAndTransactionCreatedEventStream.filter((key, value) -> value instanceof BalanceUpdatedEvent).to(BALANCE_UPDATED_TOPIC_NAME, Produced.with(Serdes.String(), new BalanceUpdatedEventSerde()));
+            balanceUpdatedEventStreamAndTransactionCreatedEventStream.filter((key, value) -> value instanceof TransactionCreatedEvent).to(SUCCESS_TRANSACTION_TOPIC_NAME, Produced.with(Serdes.String(), new TransactionCreatedEventSerde()));
+            balanceUpdatedEventStreamAndTransactionCreatedEventStream.filter((key, value) -> value instanceof TransactionCreatedEventSet).toTable(Materialized.<String, TransactionCreatedEventSet, KeyValueStore<Bytes, byte[]>>as(STORE_NAME).withKeySerde(Serdes.String()).withValueSerde(new TransactionCreatedEventSetSerde()));
 
             return resultKStream;
         };
@@ -105,7 +108,7 @@ public class WalletTransactionFunction {
         }
         TransactionCreatedEventSet eventSet = getTransactionCreatedEventSetFromStateStore(createTransactionCommand.getWalletId());
         return eventSet != null &&
-                eventSet.getEventSet().stream().mapToDouble(TransactionCreatedEvent::getTransactionAmount).sum() >= createTransactionCommand.getOrderAmount();
+                eventSet.getEventSet().stream().mapToDouble(TransactionCreatedEvent::getTransactionAmount).sum() >= Math.abs(createTransactionCommand.getOrderAmount());
     }
 
     private TransactionCreatedEvent createTransactionEvent(CreateTransactionCommandProcessedEvent processedEvent, CreateTransactionCommand command) {
@@ -120,27 +123,27 @@ public class WalletTransactionFunction {
         );
     }
 
-    private BalanceUpdatedEvent createBalanceUpdatedEvent(String id, CreateTransactionCommand command) {
-        TransactionCreatedEventSet eventSet = getTransactionCreatedEventSetFromStateStore(command.getWalletId());
-        double beforeBalance = 0;
-        double balance = 0;
+    private BalanceUpdatedEvent createBalanceUpdatedEvent(TransactionCreatedEvent event) {
+        TransactionCreatedEventSet eventSet = getTransactionCreatedEventSetFromStateStore(event.getWalletId());
+        double previousBalance = 0;
+        double newBalance;
 
         if (eventSet != null) {
             LOGGER.info("Event Store size is " + eventSet.getEventSet().size());
-            beforeBalance = eventSet.getEventSet().stream().mapToDouble(TransactionCreatedEvent::getTransactionAmount).sum();
-            balance = beforeBalance + command.getOrderAmount();
+            previousBalance = eventSet.getEventSet().stream().mapToDouble(TransactionCreatedEvent::getTransactionAmount).sum();
+            newBalance = previousBalance + event.getTransactionAmount();
 
         } else {
-            LOGGER.info("Event Store is empty, key=" + command.getWalletId());
-            balance = command.getOrderAmount();
+            LOGGER.info("Event Store is empty, key=" + event.getWalletId());
+            newBalance = event.getTransactionAmount();
         }
-        LOGGER.info(" key= "+command.getWalletId()+" ,beforeBalance= " + beforeBalance +" , balance= "+balance);
+        LOGGER.info(" Wallet:"+event.getWalletId()+" ,previousBalance:" + previousBalance +", newBalance:"+newBalance);
         //TODO: Implement logic
-        return new BalanceUpdatedEvent(id,
-                command.getOrderAmount(),
-                command.getWalletId(),
-                balance,
-                beforeBalance);
+        return new BalanceUpdatedEvent(event.getId(),
+                event.getTransactionAmount(),
+                event.getWalletId(),
+                newBalance,
+                previousBalance);
     }
 
     private CreateTransactionCommandProcessedEvent createTransactionCommandProcessedEvent(CreateTransactionCommand createTransactionCommand, TransactionStatus transactionStatus) {

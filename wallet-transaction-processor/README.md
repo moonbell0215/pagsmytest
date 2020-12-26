@@ -31,11 +31,15 @@
 1. 啟動Start Kafka
 1. 啟動TransactionProcessorApplication
 1. 開個Terminal 跑 kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic wallet.transactionCreatedEvent --property print.key=true --property key.separator="|"
+1. 開個Terminal 跑 kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic wallet.createTransactionCommandProcessedEvent --property print.key=true --property key.separator="|"
+1. 開個Terminal 跑 kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic wallet.balanceUpdatedEvent --property print.key=true --property key.separator="|"
 1. 開個Terminal 跑 kafka-console-producer.bat --bootstrap-server localhost:9092 --topic wallet.createTransactionCommand --property parse.key=true --property key.separator="|"
 1. 在 kafka-console-producer.bat Terminal 輸入 
-* "tran-1"|{"orderId":"tran-1","orderAmount":101,"walletId":"wallet-1","transactionType":"DEPOSIT","description":"test"}
-* "tran-2"|{"orderId":"tran-2","orderAmount":10,"walletId":"wallet-1","transactionType":"DEPOSIT","description":"test"}
-* "tran-3"|{"orderId":"tran-3","orderAmount":102,"walletId":"wallet-2","transactionType":"DEPOSIT","description":"test"}
+* "tran-1"|{"orderId":"tran-1","orderAmount":100,"walletId":"wallet-4","transactionType":"DEPOSIT","description":"test"}
+* "tran-2"|{"orderId":"tran-2","orderAmount":330,"walletId":"wallet-4","transactionType":"WITHDRAW_APPLY","description":"test"}
+* "tran-3"|{"orderId":"tran-3","orderAmount":10,"walletId":"wallet-4","transactionType":"DEPOSIT","description":"test"}
+* "tran-4"|{"orderId":"tran-4","orderAmount":200,"walletId":"wallet-4","transactionType":"WITHDRAW_APPLY","description":"test"}
+* "tran-5"|{"orderId":"tran-5","orderAmount":200,"walletId":"wallet-5","transactionType":"WITHDRAW_APPLY","description":"test"}
 1. 假如wallet-materialized-view-processor 也在跑,在Cosmo DB會看到三條記錄。transactionId 是唯一鍵,插入不成功,換個transactionId 
 
 

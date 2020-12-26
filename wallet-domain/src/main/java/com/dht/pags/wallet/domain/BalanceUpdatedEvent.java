@@ -31,12 +31,12 @@ public class BalanceUpdatedEvent {
                                @JsonProperty("transactionAmount") double transactionAmount,
                                @JsonProperty("walletId") String walletId,
                                @JsonProperty("balance") double balance,
-                               @JsonProperty("beforeBalance") double beforeBalance) {
+                               @JsonProperty("previousBalance") double previousBalance) {
         this.id = id;
         this.transactionAmount = transactionAmount;
         this.walletId = walletId;
         this.balance = balance;
-        this.beforeBalance = beforeBalance;
+        this.beforeBalance = previousBalance;
     }
 
     public String getId() {
@@ -59,13 +59,12 @@ public class BalanceUpdatedEvent {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("BalanceUpdatedEvent{");
-        sb.append("id='").append(id).append('\'');
-        sb.append(", transactionAmount=").append(transactionAmount);
-        sb.append(", walletId='").append(walletId).append('\'');
-        sb.append(", balance=").append(balance);
-        sb.append(", beforeBalance=").append(beforeBalance);
-        sb.append('}');
-        return sb.toString();
+        return "BalanceUpdatedEvent{" +
+                "id='" + id + '\'' +
+                ", transactionAmount=" + transactionAmount +
+                ", walletId='" + walletId + '\'' +
+                ", balance=" + balance +
+                ", beforeBalance=" + beforeBalance +
+                '}';
     }
 }
