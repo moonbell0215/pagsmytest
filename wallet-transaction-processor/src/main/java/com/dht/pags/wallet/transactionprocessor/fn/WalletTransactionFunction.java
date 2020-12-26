@@ -59,7 +59,7 @@ public class WalletTransactionFunction {
             commandKStream.peek((key, command) -> LOGGER.info(command.toString()));
 
             KStream<String, CreateTransactionCommandProcessedEvent> resultKStream =
-                    commandKStream.map((key, command) -> new KeyValue<>(key, validateAndCreateTransactionCreatedEvent(command))
+                    commandKStream.map((key, command) -> new KeyValue<>(command.getWalletId(), validateAndCreateTransactionCreatedEvent(command))
                     );
 
             KStream<String, TransactionCreatedEvent> transactionCreatedEventStream = resultKStream
