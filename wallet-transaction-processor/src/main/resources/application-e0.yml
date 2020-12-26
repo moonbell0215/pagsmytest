@@ -1,7 +1,0 @@
-spring:
-  cloud:
-    stream:
-      kafka:
-        binder:
-          consumer-properties:
-          brokers: pkc-4j8dq.southeastasia.azure.confluent.cloud

@@ -16,7 +16,3 @@ spring:
           destination: wallet.balanceUpdatedEvent
           consumer:
             nativeDecoding: false
----
-spring:
-    profiles: e0
-
