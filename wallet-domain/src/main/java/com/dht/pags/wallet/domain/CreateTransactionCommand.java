@@ -41,7 +41,7 @@ public class CreateTransactionCommand {
         }
         else
         {
-            this.orderAmount = orderAmount;
+            this.orderAmount = Math.abs(orderAmount);
         }
         this.description = description;
     }
