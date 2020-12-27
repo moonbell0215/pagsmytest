@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.Function;
 
 @Service
@@ -64,7 +63,7 @@ public class WalletTransactionFunction {
 
             KStream<String, TransactionCreatedEvent> transactionCreatedEventStream = resultKStream
                     .filter((key, event) -> TransactionStatus.SUCCESS.equals(event.getTransactionStatus()))
-                    .map((key, event) -> new KeyValue<>(event.getWalletId(), createTransactionEvent(event, event.getCommand()))
+                    .map((key, event) -> new KeyValue<>(event.getWalletId(), createTransactionEvent(event))
                     );
 
             //Balance Update 必須發生在 TransactionCreatedEvent publish到Kafka及state store 前,否則有不確定性
@@ -111,15 +110,15 @@ public class WalletTransactionFunction {
                 eventSet.getEventSet().stream().mapToDouble(TransactionCreatedEvent::getTransactionAmount).sum() >= Math.abs(createTransactionCommand.getOrderAmount());
     }
 
-    private TransactionCreatedEvent createTransactionEvent(CreateTransactionCommandProcessedEvent processedEvent, CreateTransactionCommand command) {
+    private TransactionCreatedEvent createTransactionEvent(CreateTransactionCommandProcessedEvent processedEvent) {
         //TODO: Implement logic
         return new TransactionCreatedEvent(processedEvent.getId(),
-                command.getOrderId(),
-                command.getOrderAmount(),
-                command.getWalletId(),
+                processedEvent.getOrderId(),
+                processedEvent.getTransactionAmount(),
+                processedEvent.getWalletId(),
                 processedEvent.getTransactionDateTime(),
-                command.getTransactionType(),
-                command.getDescription()
+                processedEvent.getTransactionType(),
+                processedEvent.getDescription()
         );
     }
 
@@ -165,6 +164,6 @@ public class WalletTransactionFunction {
                 System.currentTimeMillis(),
                 createTransactionCommand.getTransactionType(),
                 "Note by event:" + createTransactionCommand.getDescription(),
-                transactionStatus, createTransactionCommand);
+                transactionStatus);
     }
 }

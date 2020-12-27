@@ -1,11 +1,8 @@
 package com.dht.pags.webservice.dispatcher.controller;
 
 import com.dht.pags.wallet.domain.CreateTransactionCommand;
-import com.dht.pags.wallet.domain.TransactionCreatedEvent;
+import com.dht.pags.wallet.domain.CreateTransactionCommandProcessedEvent;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,22 +12,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.Disposable;
-import reactor.core.publisher.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
 import reactor.kafka.receiver.KafkaReceiver;
 import reactor.kafka.receiver.ReceiverRecord;
 import reactor.kafka.sender.KafkaSender;
 import reactor.kafka.sender.SenderRecord;
-import reactor.util.context.Context;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * @author cloud.d
@@ -39,15 +30,15 @@ import java.util.function.Supplier;
 @RequestMapping("/wallets")
 public class WalletController {
     private KafkaSender<String, CreateTransactionCommand> kafkaSender;
-    private KafkaReceiver<String, TransactionCreatedEvent> kafkaReceiver;
-    private Flux<ReceiverRecord<String, TransactionCreatedEvent>> inboundFlux;
+    private KafkaReceiver<String, CreateTransactionCommandProcessedEvent> kafkaReceiver;
+    private Flux<ReceiverRecord<String, CreateTransactionCommandProcessedEvent>> inboundFlux;
     private Disposable inboundFluxDisposable;
     /**
      * 监听交易处理结果的Topic
      */
     private static final String TOPIC_SEND = "wallet.createTransactionCommand";
     private static final Logger LOGGER = LoggerFactory.getLogger(WalletController.class);
-    private Sinks.Many<ReceiverRecord<String, TransactionCreatedEvent>> objectMany = Sinks.many().replay().all();
+    private Sinks.Many<ReceiverRecord<String, CreateTransactionCommandProcessedEvent>> objectMany = Sinks.many().replay().all();
 
     @PostConstruct
     public void startInboundFlux() {
@@ -73,16 +64,16 @@ public class WalletController {
      * @return 处理结果
      */
     @PostMapping(path = "/increase", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<TransactionCreatedEvent> increase(@RequestBody CreateTransactionCommand command) {
+    public Mono<CreateTransactionCommandProcessedEvent> increase(@RequestBody CreateTransactionCommand command) {
         try {
-            LOGGER.info("/transaction received: " + command.toString());
+            LOGGER.debug("/transaction received: " + command.toString());
 
             final String walletId = command.getWalletId();
             final String orderId = command.getOrderId();
 
-            Mono<TransactionCreatedEvent> result = objectMany
+            Mono<CreateTransactionCommandProcessedEvent> result = objectMany
                     .asFlux()
-                    .share()
+                    .share() //Mirror to 新的Flux, 這就不會和其他同時進行的 restful request filter override.
                     .filter(r -> r.value().getOrderId().equals(orderId) && r.value().getWalletId().equals(walletId))
                     .map(ReceiverRecord::value)
                     .take(1)  //防止filter後有多於一個結果掛掉
@@ -108,7 +99,7 @@ public class WalletController {
     }
 
     @Autowired
-    public void setKafkaReceiver(KafkaReceiver<String, TransactionCreatedEvent> kafkaReceiver) {
+    public void setKafkaReceiver(KafkaReceiver<String, CreateTransactionCommandProcessedEvent> kafkaReceiver) {
         this.kafkaReceiver = kafkaReceiver;
     }
 }

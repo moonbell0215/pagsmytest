@@ -1,6 +1,7 @@
 package com.dht.pags.webservice.dispatcher.config;
 
 import com.dht.pags.wallet.domain.CreateTransactionCommand;
+import com.dht.pags.wallet.domain.CreateTransactionCommandProcessedEvent;
 import com.dht.pags.wallet.domain.TransactionCreatedEvent;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -47,7 +48,7 @@ public class ReactiveKafkaConfig {
     /**
      * 监听已经处理好的交易事件
      */
-    private static final String TOPIC_RECEIVE_EVENT = "wallet.transactionCreatedEvent";
+    private static final String TOPIC_RECEIVE_EVENT = "wallet.createTransactionCommandProcessedEvent";
 
     @Bean
     public KafkaSender<String, CreateTransactionCommand> kafkaSender() {
@@ -64,7 +65,7 @@ public class ReactiveKafkaConfig {
     }
 
     @Bean
-    public KafkaReceiver<String, TransactionCreatedEvent> kafkaReceiver() {
+    public KafkaReceiver<String, CreateTransactionCommandProcessedEvent> kafkaReceiver() {
         final Map<String, Object> receiverProps = new HashMap<>(6);
         receiverProps.put(ConsumerConfig.GROUP_ID_CONFIG, GROUP_ID_CONFIG);
         receiverProps.put(ConsumerConfig.CLIENT_ID_CONFIG, CLIENT_ID_CONFIG);
