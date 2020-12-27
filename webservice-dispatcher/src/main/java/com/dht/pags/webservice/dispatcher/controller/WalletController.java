@@ -63,7 +63,7 @@ public class WalletController {
      *
      * @return 处理结果
      */
-    @PostMapping(path = "/increase", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/transactions", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<CreateTransactionCommandProcessedEvent> increase(@RequestBody CreateTransactionCommand command) {
         try {
             LOGGER.debug("/transaction received: " + command.toString());
