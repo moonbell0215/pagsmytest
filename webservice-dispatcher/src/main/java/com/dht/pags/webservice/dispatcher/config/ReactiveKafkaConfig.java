@@ -31,7 +31,7 @@ import java.util.Map;
  */
 @Configuration
 @SuppressWarnings("unchecked")
-public class KafkaStreamConfig {
+public class ReactiveKafkaConfig {
     @Value("${spring.kafka.properties.bootstrap.servers}")
     private String BOOTSTRAP_SERVERS_CONFIG;
 
