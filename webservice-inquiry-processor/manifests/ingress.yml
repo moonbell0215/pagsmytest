@@ -4,8 +4,6 @@ metadata:
   name: webserviceinquiryprocessor-ingress
   annotations:
     kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.org/http-method-match: "!POST"
 spec:
   rules:
     - http:
