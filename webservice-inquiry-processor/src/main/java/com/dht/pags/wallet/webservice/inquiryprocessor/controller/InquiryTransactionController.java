@@ -20,7 +20,7 @@ import java.util.Collections;
 
 @Service
 @RestController
-@RequestMapping("/funds")
+@RequestMapping("/wallets")
 public class InquiryTransactionController {
     private final Logger logger = LoggerFactory.getLogger(InquiryTransactionController.class);
 
@@ -40,7 +40,7 @@ public class InquiryTransactionController {
     private CosmosAsyncDatabase cosmosDatabase;
     private CosmosAsyncContainer cosmosContainer;
 
-    @GetMapping("/transaction-list")
+    @GetMapping("/transactions")
     public Flux<Transaction> getAllItems() {
 
         CosmosPagedFlux<Transaction> pagedFluxResponse =
@@ -49,7 +49,7 @@ public class InquiryTransactionController {
         return pagedFluxResponse;
     }
 
-    @GetMapping("/transaction-list/{walletId}")
+    @GetMapping("/transactions/{walletId}")
     public Flux<Transaction> getItemById(@PathVariable String walletId) {
 
         CosmosPagedFlux<Transaction> pagedFluxResponse =
@@ -57,16 +57,6 @@ public class InquiryTransactionController {
 
         return pagedFluxResponse;
     }
-
-
-
-
-
-
-
-
-
-
 
     @PostConstruct
     public void init() {
@@ -80,7 +70,6 @@ public class InquiryTransactionController {
                 .key(accountKey)
                 //  Setting the preferred location to Cosmos DB Account region
                 //  West US is just an example. User should set preferred location to the Cosmos DB region closest to the application
-                .preferredRegions(Collections.singletonList("Japan East"))
                 .consistencyLevel(ConsistencyLevel.EVENTUAL)
                 //  Setting content response on write enabled, which enables the SDK to return response on write operations.
                 .contentResponseOnWriteEnabled(true)

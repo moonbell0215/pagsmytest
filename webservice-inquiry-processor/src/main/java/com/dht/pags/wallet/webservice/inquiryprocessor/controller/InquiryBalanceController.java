@@ -20,7 +20,7 @@ import java.util.Collections;
 
 @Service
 @RestController
-@RequestMapping("/wallet")
+@RequestMapping("/wallets")
 public class InquiryBalanceController {
     private final Logger logger = LoggerFactory.getLogger(InquiryBalanceController.class);
 
@@ -40,7 +40,7 @@ public class InquiryBalanceController {
     private CosmosAsyncDatabase cosmosDatabase;
     private CosmosAsyncContainer cosmosContainer;
 
-    @GetMapping("/balance")
+    @GetMapping("/balances")
     public Flux<Balance> getAllItems() {
 
         CosmosPagedFlux<Balance> pagedFluxResponse =
@@ -49,29 +49,14 @@ public class InquiryBalanceController {
         return pagedFluxResponse;
     }
 
-    @GetMapping("/balance/{walletId}")
+    @GetMapping("/balances/{walletId}")
     public Flux<Balance> getItemById(@PathVariable String walletId) {
 
         CosmosPagedFlux<Balance> pagedFluxResponse =
                 cosmosContainer.queryItems("Select * from c where c.walletId IN ('"+walletId+"')", new CosmosQueryRequestOptions(), Balance.class);
 
-    // 這種寫法也可以
-//        Flux<TransactionCreatedEvent> tce =
-//            cosmosContainer.queryItems("Select * from c where c.id IN ('"+id+"')", new CosmosQueryRequestOptions(), TransactionCreatedEvent.class);
-//        logger.info(tce.toString());
-
         return pagedFluxResponse;
     }
-
-
-
-
-
-
-
-
-
-
 
     @PostConstruct
     public void init() {
