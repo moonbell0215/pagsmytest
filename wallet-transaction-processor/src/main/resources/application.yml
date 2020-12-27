@@ -6,10 +6,14 @@ spring:
           binder:
             deserialization-exception-handler: logandcontinue
             application-id: wallet-transaction-processor
+            configuration:
+              processing:
+                guarantee:
+                  exactly_once
       function:
         definition: createTransactionCommandHandler
       bindings:
-#        主要輸入
+        #        主要輸入
         createTransactionCommandHandler-in-0:
           destination: wallet.createTransactionCommand
           consumer:
