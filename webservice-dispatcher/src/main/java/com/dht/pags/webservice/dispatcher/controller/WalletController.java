@@ -27,7 +27,7 @@ import javax.annotation.PreDestroy;
  * @author cloud.d
  */
 @RestController
-@RequestMapping("/wallets")
+@RequestMapping
 public class WalletController {
     private KafkaSender<String, CreateTransactionCommand> kafkaSender;
     private KafkaReceiver<String, CreateTransactionCommandProcessedEvent> kafkaReceiver;
