@@ -5,6 +5,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.org/http-method-match: "!POST"
 spec:
   rules:
     - http:
@@ -12,4 +13,10 @@ spec:
           - backend:
               serviceName: webserviceinquiryprocessor
               servicePort: 8080
-            path: /
+            path: /wallets/transactions/
+            pathType: Prefix
+          - backend:
+              serviceName: webserviceinquiryprocessor
+              servicePort: 8080
+            path: /wallets/balances/
+            pathType: Prefix
