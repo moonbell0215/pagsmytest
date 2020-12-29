@@ -23,7 +23,10 @@ public class WalletMaterializedViewProcessor {
     public Consumer<TransactionCreatedEvent> walletTransactionToCosmoDbView() {
         return event -> {
             LOGGER.info("ReceivedTran: " + event);
-            materializedViewUpdateService.createItem(event).log().subscribe();
+            TransactionCreatedEvent transactionCreatedEvent = new TransactionCreatedEvent(event.getWalletId()+"-"+event.getTransactionDateTime(),
+                    event.getOrderId(), event.getTransactionAmount(), event.getWalletId(), event.getTransactionDateTime(), event.getTransactionType(), event.getDescription());
+            LOGGER.info("ReceivedTran: " + transactionCreatedEvent.getId());
+            materializedViewUpdateService.createItem(transactionCreatedEvent).log().subscribe();
         };
     }
 
@@ -31,7 +34,10 @@ public class WalletMaterializedViewProcessor {
     public Consumer<BalanceUpdatedEvent> balanceUpdatedEventToCosmoDbView() {
         return event -> {
             LOGGER.info("ReceivedBalance: " + event);
-            materializedViewUpdateService.createItem(event).log().subscribe();
+            BalanceUpdatedEvent balanceUpdatedEvent = new BalanceUpdatedEvent(event.getWalletId()+"-"+event.getUpdateTime(),
+                    event.getTransactionAmount(), event.getWalletId(), event.getUpdateTime(), event.getBalance(), event.getBeforeBalance());
+            LOGGER.info("ReceivedBalance: " + balanceUpdatedEvent.getId());
+            materializedViewUpdateService.createBalance(balanceUpdatedEvent).log().subscribe();
         };
     }
 

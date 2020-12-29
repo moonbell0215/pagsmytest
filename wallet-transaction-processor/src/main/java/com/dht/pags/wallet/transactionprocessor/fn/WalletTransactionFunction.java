@@ -136,11 +136,12 @@ public class WalletTransactionFunction {
             LOGGER.info("Event Store is empty, key=" + event.getWalletId());
             newBalance = event.getTransactionAmount();
         }
-        LOGGER.info(" Wallet:"+event.getWalletId()+" ,previousBalance:" + previousBalance +", newBalance:"+newBalance);
+        LOGGER.info("id = " + event.getId() + ",  Wallet:"+event.getWalletId()+" ,previousBalance:" + previousBalance + ", transactionAmount = " + event.getTransactionAmount() + ", newBalance:"+newBalance);
         //TODO: Implement logic
         return new BalanceUpdatedEvent(event.getId(),
                 event.getTransactionAmount(),
                 event.getWalletId(),
+                event.getTransactionDateTime(),
                 newBalance,
                 previousBalance);
     }

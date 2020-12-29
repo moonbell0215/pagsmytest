@@ -3,7 +3,6 @@ package com.dht.pags.wallet.materalizedviewprocesor.repository;
 import com.azure.cosmos.*;
 import com.azure.cosmos.models.CosmosContainerProperties;
 import com.azure.cosmos.models.CosmosItemResponse;
-import com.dht.pags.wallet.domain.BalanceUpdatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +24,7 @@ public class MaterializedViewUpdateService {
     @Value("${application.cosmosdb.balance}")
     private String containerBalance;
 
-    private final Logger log = LoggerFactory.getLogger(MaterializedViewUpdateService.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(MaterializedViewUpdateService.class);
 
     @Value("${application.cosmosdb.accountHost}")
     private String accountHost;
@@ -43,7 +42,7 @@ public class MaterializedViewUpdateService {
     }
 
     private CosmosAsyncContainer getContainerCreateResourcesIfNotExist() {
-        log.info("Configuring CosmosDB connection");
+        LOGGER.info("Configuring CosmosDB connection");
         cosmosClient = new CosmosClientBuilder()
                 .endpoint(accountHost)
                 .key(accountKey)
@@ -63,16 +62,19 @@ public class MaterializedViewUpdateService {
         if (cosmosContainer == null) {
             CosmosContainerProperties properties = new CosmosContainerProperties(containerId, "/walletId");
             cosmosDatabase.createContainerIfNotExists(properties);
-            cosmosContainer = cosmosDatabase.getContainer(containerId);
+            //cosmosContainer = cosmosDatabase.getContainer(containerId);
         }
 
         return cosmosContainer;
     }
 
     public <T> Mono<CosmosItemResponse<T>> createItem(T item) {
-        if (item instanceof BalanceUpdatedEvent) {
-            cosmosContainer = cosmosDatabase.getContainer(containerBalance);
-        }
+        cosmosContainer = cosmosDatabase.getContainer(containerId);
+        return cosmosContainer.createItem(item);
+    }
+
+    public <T> Mono<CosmosItemResponse<T>> createBalance(T item) {
+        cosmosContainer = cosmosDatabase.getContainer(containerBalance);
         return cosmosContainer.createItem(item);
     }
 }
