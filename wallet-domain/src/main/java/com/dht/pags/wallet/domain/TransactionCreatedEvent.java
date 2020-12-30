@@ -98,11 +98,11 @@ public class TransactionCreatedEvent {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TransactionCreatedEvent that = (TransactionCreatedEvent) o;
-        return Double.compare(that.transactionAmount, transactionAmount) == 0 && transactionDateTime == that.transactionDateTime && Objects.equals(id, that.id) && Objects.equals(orderId, that.orderId) && Objects.equals(walletId, that.walletId) && transactionType == that.transactionType && description.equals(that.description);
+        return Objects.equals(id, that.id) && Objects.equals(walletId, that.walletId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, orderId, transactionAmount, walletId, transactionDateTime, transactionType, description);
+        return Objects.hash(id, walletId);
     }
 }
