@@ -22,10 +22,21 @@ spring:
           destination: wallet.createTransactionCommandProcessedEvent
           consumer:
             nativeDecoding: false
-
 application:
   topic:
     name:
       store: TransactionCreatedEventStore
       out-1: wallet.transactionCreatedEvent
       out-2: wallet.balanceUpdatedEvent
+management:
+  health:
+    binders: enabled
+  endpoints:
+    web:
+      exposure:
+        include: metrics,info,kafkastreamstopology
+  endpoint:
+    health:
+      show-details: always
+    bindings:
+      enabled: true
