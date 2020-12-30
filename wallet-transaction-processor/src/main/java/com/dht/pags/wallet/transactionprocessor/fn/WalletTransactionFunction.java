@@ -20,9 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 @Service
@@ -51,7 +49,10 @@ public class WalletTransactionFunction {
     @Value("${application.topic.name.store}")
     private String STORE_NAME;
 
+    private Map<String,TransactionCreatedEventSet> tempStore;
+
     public WalletTransactionFunction() {
+        tempStore = new HashMap<>();
 
     }
 
@@ -92,13 +93,26 @@ public class WalletTransactionFunction {
         if (keyValueStore == null) {
             keyValueStore = interactiveQueryService.getQueryableStore(STORE_NAME, QueryableStoreTypes.keyValueStore());
         }
-        return keyValueStore.get(walletId);
+        TransactionCreatedEventSet tempStoreEventSet = tempStore.get(walletId);
+        if(tempStoreEventSet != null)
+        {
+            return tempStoreEventSet;
+        }
+
+        TransactionCreatedEventSet stateStoreEventSet = keyValueStore.get(walletId);
+        if(stateStoreEventSet != null)
+        {
+            tempStore.put(walletId,stateStoreEventSet);
+        }
+
+        return stateStoreEventSet;
     }
 
     private TransactionCreatedEventSet updateTransactionCreatedEventList(TransactionCreatedEvent event) {
         TransactionCreatedEventSet eventSet = Optional.ofNullable(getTransactionCreatedEventSetFromStateStore(event.getWalletId())).orElse(new TransactionCreatedEventSet());
         LOGGER.info("Event Store size is " + eventSet.getEventSet().size());
         boolean added = eventSet.getEventSet().add(event);
+        this.tempStore.put(event.getWalletId(),eventSet);
         LOGGER.info("TransactionCreatedEvent added to eventSet:" + added);
         if (!added) {
             throw new RuntimeException("TransactionCreatedEvent is not added to eventSet!" + event.toString());
