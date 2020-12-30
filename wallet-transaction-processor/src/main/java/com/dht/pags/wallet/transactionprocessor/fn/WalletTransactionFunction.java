@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.support.serializer.JsonSerde;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,8 @@ public class WalletTransactionFunction {
 
     @Autowired
     private InteractiveQueryService interactiveQueryService;
+
+    private ReadOnlyKeyValueStore<String, TransactionCreatedEventSet> keyValueStore;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WalletTransactionFunction.class);
 
@@ -75,18 +78,20 @@ public class WalletTransactionFunction {
                         result.add(new KeyValue(event.getWalletId(), event));
                         result.add(new KeyValue(event.getWalletId(), updateTransactionCreatedEventList(event)));
                         return result;
-                    },Named.as("FlatMap-TransactionCreatedEvent-to-BalanceUpdatedEvent-And-updateTransactionCreatedEventList"));
+                    }, Named.as("FlatMap-TransactionCreatedEvent-to-BalanceUpdatedEvent-And-updateTransactionCreatedEventList"));
 
-            balanceUpdatedEventStreamAndTransactionCreatedEventStream.filter((key, value) -> value instanceof BalanceUpdatedEvent,Named.as("Filter-And-Store-BalanceUpdatedEvent")).to(BALANCE_UPDATED_TOPIC_NAME, Produced.with(Serdes.String(), new BalanceUpdatedEventSerde()));
-            balanceUpdatedEventStreamAndTransactionCreatedEventStream.filter((key, value) -> value instanceof TransactionCreatedEvent,Named.as("Filter-And-Store-TransactionCreatedEvent")).to(SUCCESS_TRANSACTION_TOPIC_NAME, Produced.with(Serdes.String(), new TransactionCreatedEventSerde()));
-            balanceUpdatedEventStreamAndTransactionCreatedEventStream.filter((key, value) -> value instanceof TransactionCreatedEventSet,Named.as("Filter-And-Store-" + STORE_NAME)).toTable(Named.as("STATE-STORE"),Materialized.<String, TransactionCreatedEventSet, KeyValueStore<Bytes, byte[]>>as(STORE_NAME).withKeySerde(Serdes.String()).withValueSerde(new TransactionCreatedEventSetSerde()));
+            balanceUpdatedEventStreamAndTransactionCreatedEventStream.filter((key, value) -> value instanceof BalanceUpdatedEvent, Named.as("Filter-And-Store-BalanceUpdatedEvent")).to(BALANCE_UPDATED_TOPIC_NAME, Produced.with(Serdes.String(), new BalanceUpdatedEventSerde()));
+            balanceUpdatedEventStreamAndTransactionCreatedEventStream.filter((key, value) -> value instanceof TransactionCreatedEvent, Named.as("Filter-And-Store-TransactionCreatedEvent")).to(SUCCESS_TRANSACTION_TOPIC_NAME, Produced.with(Serdes.String(), new TransactionCreatedEventSerde()));
+            balanceUpdatedEventStreamAndTransactionCreatedEventStream.filter((key, value) -> value instanceof TransactionCreatedEventSet, Named.as("Filter-And-Store-" + STORE_NAME)).toTable(Named.as("STATE-STORE"), Materialized.<String, TransactionCreatedEventSet, KeyValueStore<Bytes, byte[]>>as(STORE_NAME).withKeySerde(Serdes.String()).withValueSerde(new TransactionCreatedEventSetSerde()));
 
             return resultKStream;
         };
     }
 
     private TransactionCreatedEventSet getTransactionCreatedEventSetFromStateStore(String walletId) {
-        ReadOnlyKeyValueStore<String, TransactionCreatedEventSet> keyValueStore = interactiveQueryService.getQueryableStore(STORE_NAME, QueryableStoreTypes.keyValueStore());
+        if (keyValueStore == null) {
+            keyValueStore = interactiveQueryService.getQueryableStore(STORE_NAME, QueryableStoreTypes.keyValueStore());
+        }
         return keyValueStore.get(walletId);
     }
 
@@ -95,8 +100,7 @@ public class WalletTransactionFunction {
         LOGGER.info("Event Store size is " + eventSet.getEventSet().size());
         boolean added = eventSet.getEventSet().add(event);
         LOGGER.info("TransactionCreatedEvent added to eventSet:" + added);
-        if(!added)
-        {
+        if (!added) {
             throw new RuntimeException("TransactionCreatedEvent is not added to eventSet!" + event.toString());
         }
         return eventSet;
@@ -157,7 +161,7 @@ public class WalletTransactionFunction {
         TransactionCreatedEventSet eventSet = getTransactionCreatedEventSetFromStateStore(createTransactionCommand.getWalletId());
         String id = createTransactionCommand.getWalletId();
         if (eventSet != null) {
-            LOGGER.info("Event Store size is " + eventSet.getEventSet().size());
+            //LOGGER.info("Event Store size is " + eventSet.getEventSet().size());
             id += "-" + (eventSet.getEventSet().size() + 1);
         } else {
             id += "-1";
