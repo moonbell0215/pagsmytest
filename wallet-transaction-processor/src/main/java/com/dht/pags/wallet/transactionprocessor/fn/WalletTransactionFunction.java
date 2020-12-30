@@ -95,6 +95,10 @@ public class WalletTransactionFunction {
         LOGGER.info("Event Store size is " + eventSet.getEventSet().size());
         boolean added = eventSet.getEventSet().add(event);
         LOGGER.info("TransactionCreatedEvent added to eventSet:" + added);
+        if(!added)
+        {
+            throw new RuntimeException("TransactionCreatedEvent is not added to eventSet!" + event.toString());
+        }
         return eventSet;
     }
 
