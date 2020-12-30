@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.support.serializer.JsonSerde;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -124,17 +125,18 @@ public class WalletTransactionFunction {
 
     private BalanceUpdatedEvent createBalanceUpdatedEvent(TransactionCreatedEvent event) {
         TransactionCreatedEventSet eventSet = getTransactionCreatedEventSetFromStateStore(event.getWalletId());
-        double previousBalance = 0;
-        double newBalance;
+        BigDecimal previousBalance = new BigDecimal("0");
+        BigDecimal newBalance;
 
         if (eventSet != null) {
-            LOGGER.info("Event Store size is " + eventSet.getEventSet().size());
-            previousBalance = eventSet.getEventSet().stream().mapToDouble(TransactionCreatedEvent::getTransactionAmount).sum();
-            newBalance = previousBalance + event.getTransactionAmount();
+            //LOGGER.info("Event Store size is " + eventSet.getpreviousBalanceEventSet().size());
+            String money = String.valueOf(eventSet.getEventSet().stream().mapToDouble(TransactionCreatedEvent::getTransactionAmount).sum());
+            previousBalance = new BigDecimal(money);
+            newBalance = previousBalance.add(new BigDecimal(event.getTransactionAmount()));
 
         } else {
             LOGGER.info("Event Store is empty, key=" + event.getWalletId());
-            newBalance = event.getTransactionAmount();
+            newBalance = BigDecimal.valueOf(event.getTransactionAmount());
         }
         LOGGER.info("id = " + event.getId() + ",  Wallet:"+event.getWalletId()+" ,previousBalance:" + previousBalance + ", transactionAmount = " + event.getTransactionAmount() + ", newBalance:"+newBalance);
         //TODO: Implement logic

@@ -3,6 +3,8 @@ package com.dht.pags.wallet.domain;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.math.BigDecimal;
+
 public class BalanceUpdatedEvent {
     /**
      * 本次交易ID
@@ -23,11 +25,11 @@ public class BalanceUpdatedEvent {
     /**
      * 交易後餘額，當前餘額
      */
-    private final double balance;
+    private final BigDecimal balance;
     /**
      * 交易餘額
      */
-    private final double beforeBalance;
+    private final BigDecimal beforeBalance;
 
 
     @JsonCreator
@@ -35,8 +37,8 @@ public class BalanceUpdatedEvent {
                                @JsonProperty("transactionAmount") double transactionAmount,
                                @JsonProperty("walletId") String walletId,
                                @JsonProperty("updateTime") long updateTime,
-                               @JsonProperty("balance") double balance,
-                               @JsonProperty("previousBalance") double previousBalance) {
+                               @JsonProperty("balance") BigDecimal balance,
+                               @JsonProperty("previousBalance") BigDecimal previousBalance) {
         this.id = id;
         this.transactionAmount = transactionAmount;
         this.walletId = walletId;
@@ -57,11 +59,11 @@ public class BalanceUpdatedEvent {
         return walletId;
     }
 
-    public double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public double getBeforeBalance() { return beforeBalance; }
+    public BigDecimal getBeforeBalance() { return beforeBalance; }
 
     public long getUpdateTime() { return updateTime; }
 
