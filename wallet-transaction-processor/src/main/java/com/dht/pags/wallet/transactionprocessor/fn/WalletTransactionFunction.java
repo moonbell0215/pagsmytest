@@ -93,8 +93,8 @@ public class WalletTransactionFunction {
     private TransactionCreatedEventSet updateTransactionCreatedEventList(TransactionCreatedEvent event) {
         TransactionCreatedEventSet eventSet = Optional.ofNullable(getTransactionCreatedEventSetFromStateStore(event.getWalletId())).orElse(new TransactionCreatedEventSet());
         LOGGER.info("Event Store size is " + eventSet.getEventSet().size());
-        eventSet.getEventSet().forEach(x -> LOGGER.info(x.toString()));
-        eventSet.getEventSet().add(event);
+        boolean added = eventSet.getEventSet().add(event);
+        LOGGER.info("TransactionCreatedEvent added to eventSet:" + added);
         return eventSet;
     }
 
