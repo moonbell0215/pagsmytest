@@ -56,15 +56,15 @@ public class WalletTransactionFunction {
     public Function<KStream<String, CreateTransactionCommand>,
             KStream<String, CreateTransactionCommandProcessedEvent>> createTransactionCommandHandler() {
         return (commandKStream) -> {
-            commandKStream.peek((key, command) -> LOGGER.info(command.toString()));
+            commandKStream.peek((key, command) -> LOGGER.info(command.toString()), Named.as("Log-command-received"));
 
             KStream<String, CreateTransactionCommandProcessedEvent> resultKStream =
                     commandKStream.map((key, command) -> new KeyValue<>(command.getWalletId(), validateAndCreateTransactionCreatedEvent(command))
-                    );
+                            , Named.as("Map-CreateTransactionCommand-to-CreateTransactionCommandProcessedEvent"));
 
             KStream<String, TransactionCreatedEvent> transactionCreatedEventStream = resultKStream
-                    .filter((key, event) -> TransactionStatus.SUCCESS.equals(event.getTransactionStatus()))
-                    .map((key, event) -> new KeyValue<>(event.getWalletId(), createTransactionEvent(event))
+                    .filter((key, event) -> TransactionStatus.SUCCESS.equals(event.getTransactionStatus()), Named.as("Filter-by-accepted-command"))
+                    .map((key, event) -> new KeyValue<>(event.getWalletId(), createTransactionEvent(event)), Named.as("Create-TransactionCreatedEvent-for-accepted-command")
                     );
 
             //Balance Update 必須發生在 TransactionCreatedEvent publish到Kafka及state store 前,否則有不確定性
@@ -72,14 +72,14 @@ public class WalletTransactionFunction {
                     .flatMap((key, event) -> {
                         List result = new ArrayList<>();
                         result.add(new KeyValue(event.getWalletId(), createBalanceUpdatedEvent(event)));
-                        result.add(new KeyValue(event.getWalletId(),event));
-                        result.add(new KeyValue(event.getWalletId(),updateTransactionCreatedEventList(event)));
+                        result.add(new KeyValue(event.getWalletId(), event));
+                        result.add(new KeyValue(event.getWalletId(), updateTransactionCreatedEventList(event)));
                         return result;
-                    });
+                    },Named.as("FlatMap-TransactionCreatedEvent-to-BalanceUpdatedEvent-And-updateTransactionCreatedEventList"));
 
-            balanceUpdatedEventStreamAndTransactionCreatedEventStream.filter((key, value) -> value instanceof BalanceUpdatedEvent).to(BALANCE_UPDATED_TOPIC_NAME, Produced.with(Serdes.String(), new BalanceUpdatedEventSerde()));
-            balanceUpdatedEventStreamAndTransactionCreatedEventStream.filter((key, value) -> value instanceof TransactionCreatedEvent).to(SUCCESS_TRANSACTION_TOPIC_NAME, Produced.with(Serdes.String(), new TransactionCreatedEventSerde()));
-            balanceUpdatedEventStreamAndTransactionCreatedEventStream.filter((key, value) -> value instanceof TransactionCreatedEventSet).toTable(Materialized.<String, TransactionCreatedEventSet, KeyValueStore<Bytes, byte[]>>as(STORE_NAME).withKeySerde(Serdes.String()).withValueSerde(new TransactionCreatedEventSetSerde()));
+            balanceUpdatedEventStreamAndTransactionCreatedEventStream.filter((key, value) -> value instanceof BalanceUpdatedEvent,Named.as("Filter-And-Store-BalanceUpdatedEvent")).to(BALANCE_UPDATED_TOPIC_NAME, Produced.with(Serdes.String(), new BalanceUpdatedEventSerde()));
+            balanceUpdatedEventStreamAndTransactionCreatedEventStream.filter((key, value) -> value instanceof TransactionCreatedEvent,Named.as("Filter-And-Store-TransactionCreatedEvent")).to(SUCCESS_TRANSACTION_TOPIC_NAME, Produced.with(Serdes.String(), new TransactionCreatedEventSerde()));
+            balanceUpdatedEventStreamAndTransactionCreatedEventStream.filter((key, value) -> value instanceof TransactionCreatedEventSet,Named.as("Filter-And-Store-" + STORE_NAME)).toTable(Named.as("STATE-STORE"),Materialized.<String, TransactionCreatedEventSet, KeyValueStore<Bytes, byte[]>>as(STORE_NAME).withKeySerde(Serdes.String()).withValueSerde(new TransactionCreatedEventSetSerde()));
 
             return resultKStream;
         };
@@ -138,7 +138,7 @@ public class WalletTransactionFunction {
             LOGGER.info("Event Store is empty, key=" + event.getWalletId());
             newBalance = BigDecimal.valueOf(event.getTransactionAmount());
         }
-        LOGGER.info("id = " + event.getId() + ",  Wallet:"+event.getWalletId()+" ,previousBalance:" + previousBalance + ", transactionAmount = " + event.getTransactionAmount() + ", newBalance:"+newBalance);
+        LOGGER.info("id = " + event.getId() + ",  Wallet:" + event.getWalletId() + " ,previousBalance:" + previousBalance + ", transactionAmount = " + event.getTransactionAmount() + ", newBalance:" + newBalance);
         //TODO: Implement logic
         return new BalanceUpdatedEvent(event.getId(),
                 event.getTransactionAmount(),
@@ -154,7 +154,7 @@ public class WalletTransactionFunction {
         String id = createTransactionCommand.getWalletId();
         if (eventSet != null) {
             LOGGER.info("Event Store size is " + eventSet.getEventSet().size());
-            id +=  "-" +(eventSet.getEventSet().size() +1);
+            id += "-" + (eventSet.getEventSet().size() + 1);
         } else {
             id += "-1";
         }
