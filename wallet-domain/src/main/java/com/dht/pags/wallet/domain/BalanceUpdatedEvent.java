@@ -13,7 +13,7 @@ public class BalanceUpdatedEvent {
     /**
      * 本次交易的金額
      */
-    private final double transactionAmount;
+    private final BigDecimal transactionAmount;
     /**
      * 交易錢包ID ，(會員ID)
      */
@@ -34,7 +34,7 @@ public class BalanceUpdatedEvent {
 
     @JsonCreator
     public BalanceUpdatedEvent(@JsonProperty("id") String id,
-                               @JsonProperty("transactionAmount") double transactionAmount,
+                               @JsonProperty("transactionAmount") BigDecimal transactionAmount,
                                @JsonProperty("walletId") String walletId,
                                @JsonProperty("updateTime") long updateTime,
                                @JsonProperty("balance") BigDecimal balance,
@@ -51,7 +51,7 @@ public class BalanceUpdatedEvent {
         return id;
     }
 
-    public double getTransactionAmount() {
+    public BigDecimal getTransactionAmount() {
         return transactionAmount;
     }
 

@@ -3,6 +3,7 @@ package com.dht.pags.wallet.domain;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 public class TransactionCreatedEvent {
@@ -18,7 +19,7 @@ public class TransactionCreatedEvent {
     /**
      * 本次交易金額
      */
-    private final double transactionAmount;
+    private final BigDecimal transactionAmount;
     /**
      * 會員錢包id
      */
@@ -39,7 +40,7 @@ public class TransactionCreatedEvent {
     @JsonCreator
     public TransactionCreatedEvent(@JsonProperty("id") String id,
                                    @JsonProperty("orderId") String orderId,
-                                   @JsonProperty("transactionAmount") double transactionAmount,
+                                   @JsonProperty("transactionAmount") BigDecimal transactionAmount,
                                    @JsonProperty("walletId") String walletId,
                                    @JsonProperty("transactionDateTime") long transactionDateTime,
                                    @JsonProperty("transactionType") TransactionType transactionType,
@@ -59,7 +60,7 @@ public class TransactionCreatedEvent {
 
     public String getOrderId() { return orderId; }
 
-    public double getTransactionAmount() {
+    public BigDecimal getTransactionAmount() {
         return transactionAmount;
     }
 
@@ -98,11 +99,11 @@ public class TransactionCreatedEvent {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TransactionCreatedEvent that = (TransactionCreatedEvent) o;
-        return Objects.equals(id, that.id) && Objects.equals(walletId, that.walletId);
+        return that.transactionAmount.compareTo(transactionAmount) == 0 && transactionDateTime == that.transactionDateTime && Objects.equals(id, that.id) && Objects.equals(orderId, that.orderId) && Objects.equals(walletId, that.walletId) && transactionType == that.transactionType && description.equals(that.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, walletId);
+        return Objects.hash(id, orderId, transactionAmount, walletId, transactionDateTime, transactionType, description);
     }
 }

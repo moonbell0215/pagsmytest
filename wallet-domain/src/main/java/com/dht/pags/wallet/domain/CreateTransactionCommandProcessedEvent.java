@@ -3,6 +3,8 @@ package com.dht.pags.wallet.domain;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.math.BigDecimal;
+
 public class CreateTransactionCommandProcessedEvent {
     /**
      * 本次交易ID  成功才會有交易ID
@@ -11,7 +13,7 @@ public class CreateTransactionCommandProcessedEvent {
     /**
      * 本次交易金額
      */
-    private final double transactionAmount;
+    private final BigDecimal transactionAmount;
     /**
      * 會員訂單編號
      */
@@ -39,7 +41,7 @@ public class CreateTransactionCommandProcessedEvent {
 
     @JsonCreator
     public CreateTransactionCommandProcessedEvent(@JsonProperty("id") String id,
-                                                  @JsonProperty("transactionAmount") double transactionAmount,
+                                                  @JsonProperty("transactionAmount") BigDecimal transactionAmount,
                                                   @JsonProperty("orderId") String orderId,
                                                   @JsonProperty("walletId") String walletId,
                                                   @JsonProperty("transactionDateTime") long transactionDateTime,
@@ -61,7 +63,7 @@ public class CreateTransactionCommandProcessedEvent {
         return id;
     }
 
-    public double getTransactionAmount() {
+    public BigDecimal getTransactionAmount() {
         return transactionAmount;
     }
 

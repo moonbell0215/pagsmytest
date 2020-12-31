@@ -130,7 +130,7 @@ public class WalletTransactionFunction {
         }
         TransactionCreatedEventSet eventSet = getTransactionCreatedEventSetFromStateStore(createTransactionCommand.getWalletId());
         return eventSet != null &&
-                eventSet.getEventSet().stream().mapToDouble(TransactionCreatedEvent::getTransactionAmount).sum() >= Math.abs(createTransactionCommand.getOrderAmount());
+                eventSet.getEventSet().stream().map(TransactionCreatedEvent::getTransactionAmount).reduce(BigDecimal.ZERO, BigDecimal::add).compareTo(createTransactionCommand.getOrderAmount().abs()) >= 0;
     }
 
     private TransactionCreatedEvent createTransactionEvent(CreateTransactionCommandProcessedEvent processedEvent) {
@@ -152,13 +152,12 @@ public class WalletTransactionFunction {
 
         if (eventSet != null) {
             //LOGGER.info("Event Store size is " + eventSet.getpreviousBalanceEventSet().size());
-            String money = String.valueOf(eventSet.getEventSet().stream().mapToDouble(TransactionCreatedEvent::getTransactionAmount).sum());
-            previousBalance = new BigDecimal(money);
-            newBalance = previousBalance.add(new BigDecimal(event.getTransactionAmount()));
+            previousBalance = eventSet.getEventSet().stream().map(TransactionCreatedEvent::getTransactionAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+            newBalance = previousBalance.add(event.getTransactionAmount());
 
         } else {
             LOGGER.info("Event Store is empty, key=" + event.getWalletId());
-            newBalance = BigDecimal.valueOf(event.getTransactionAmount());
+            newBalance = event.getTransactionAmount();
         }
         LOGGER.info("id = " + event.getId() + ",  Wallet:" + event.getWalletId() + " ,previousBalance:" + previousBalance + ", transactionAmount = " + event.getTransactionAmount() + ", newBalance:" + newBalance);
         //TODO: Implement logic
