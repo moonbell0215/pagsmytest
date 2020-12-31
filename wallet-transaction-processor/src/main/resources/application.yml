@@ -1,3 +1,4 @@
+
 spring:
   cloud:
     stream:
@@ -10,8 +11,6 @@ spring:
               processing:
                 guarantee:
                   exactly_once
-      function:
-        definition: createTransactionCommandHandler
       bindings:
         #        主要輸入
         createTransactionCommandHandler-in-0:
@@ -22,6 +21,11 @@ spring:
           destination: wallet.createTransactionCommandProcessedEvent
           consumer:
             nativeDecoding: false
+      function:
+        definition: createTransactionCommandHandler
+  kafka:
+    producer:
+      compression-type: gzip
 application:
   topic:
     name:
