@@ -3,6 +3,8 @@ package com.dht.pags.wallet.domain;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.math.BigDecimal;
+
 public class CreateTransactionCommand {
     /**
      * 會員訂單編號
@@ -11,7 +13,7 @@ public class CreateTransactionCommand {
     /**
      * 會員訂單金額
      */
-    private final double orderAmount;
+    private final BigDecimal orderAmount;
     /**
      * 會員錢包id
      */
@@ -28,7 +30,7 @@ public class CreateTransactionCommand {
 
     @JsonCreator
     public CreateTransactionCommand(@JsonProperty("orderId") String orderId,
-                                    @JsonProperty("orderAmount") double orderAmount,
+                                    @JsonProperty("orderAmount") BigDecimal orderAmount,
                                     @JsonProperty("walletId") String walletId,
                                     @JsonProperty("transactionType") TransactionType transactionType,
                                     @JsonProperty("description") String description) {
@@ -37,11 +39,11 @@ public class CreateTransactionCommand {
         this.transactionType = transactionType;
         if(this.transactionType.isReduce())
         {
-            this.orderAmount = Math.abs(orderAmount) * -1;
+            this.orderAmount = new BigDecimal("0").subtract(orderAmount.abs());
         }
         else
         {
-            this.orderAmount = Math.abs(orderAmount);
+            this.orderAmount = orderAmount.abs();
         }
         this.description = description;
     }
@@ -50,7 +52,7 @@ public class CreateTransactionCommand {
         return orderId;
     }
 
-    public double getOrderAmount() {
+    public BigDecimal getOrderAmount() {
         return orderAmount;
     }
 
