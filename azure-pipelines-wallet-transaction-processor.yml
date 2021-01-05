@@ -72,7 +72,7 @@ stages:
     displayName: Deploy
     pool:
       vmImage: $(vmImageName)
-    environment: 'KasonA099pags-7146'
+    environment: 'KasonA099pags'
     strategy:
       runOnce:
         deploy:
