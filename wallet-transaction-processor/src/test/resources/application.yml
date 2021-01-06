@@ -1,0 +1,42 @@
+
+spring:
+  cloud:
+    stream:
+      kafka:
+        streams:
+          binder:
+            deserialization-exception-handler: logandcontinue
+            application-id: wallet-transaction-processor
+      bindings:
+        #        主要輸入
+        createTransactionCommandHandler-in-0:
+          destination: wallet.createTransactionCommand
+          consumer:
+            nativeDecoding: false
+        createTransactionCommandHandler-out-0:
+          destination: wallet.createTransactionCommandProcessedEvent
+          consumer:
+            nativeDecoding: false
+      function:
+        definition: createTransactionCommandHandler
+  kafka:
+    producer:
+      compression-type: gzip
+application:
+  topic:
+    name:
+      store: TransactionCreatedEventStore
+      out-1: wallet.transactionCreatedEvent
+      out-2: wallet.balanceUpdatedEvent
+management:
+  health:
+    binders: enabled
+  endpoints:
+    web:
+      exposure:
+        include: metrics,info,kafkastreamstopology
+  endpoint:
+    health:
+      show-details: always
+    bindings:
+      enabled: true
