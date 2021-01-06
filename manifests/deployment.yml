@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: wallettransactionprocessor 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wallettransactionprocessor
+  template:
+    metadata:
+      labels:
+        app: wallettransactionprocessor 
+    spec:
+      containers:
+        - name: wallettransactionprocessor 
+          image: dhtpags.azurecr.io/wallettransactionprocessor
+          ports:
+          - containerPort: 8080
