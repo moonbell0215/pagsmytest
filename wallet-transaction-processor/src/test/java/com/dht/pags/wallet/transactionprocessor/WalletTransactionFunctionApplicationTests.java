@@ -26,13 +26,14 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.rule.EmbeddedKafkaRule;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
+@DirtiesContext
 @ActiveProfiles("test")
 class WalletTransactionFunctionApplicationTests {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WalletTransactionFunctionApplicationTests.class);
@@ -116,9 +117,15 @@ class WalletTransactionFunctionApplicationTests {
 
 	@AfterAll
 	public static void tearDown() {
-		consumerProcessedEvent.close();
-		consumerBalanceUpdatedEvent.close();
-		consumerTransactionCreatedEvent.close();
+		try {
+			consumerProcessedEvent.close();
+			consumerBalanceUpdatedEvent.close();
+			consumerTransactionCreatedEvent.close();
+			LOGGER.info("==================================embeddedKafka.destroy()=========================================");
+			embeddedKafka.destroy();
+		} catch (Exception e){
+			LOGGER.info(e.getMessage());
+		}
 	}
 
 	@Test
