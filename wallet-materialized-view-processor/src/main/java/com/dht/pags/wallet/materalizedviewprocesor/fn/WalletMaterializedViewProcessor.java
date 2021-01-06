@@ -25,7 +25,6 @@ public class WalletMaterializedViewProcessor {
             LOGGER.info("ReceivedTran: " + event);
             TransactionCreatedEvent transactionCreatedEvent = new TransactionCreatedEvent(event.getWalletId()+"-"+event.getTransactionDateTime(),
                     event.getOrderId(), event.getTransactionAmount(), event.getWalletId(), event.getTransactionDateTime(), event.getTransactionType(), event.getDescription());
-            LOGGER.info("ReceivedTran: " + transactionCreatedEvent.getId());
             materializedViewUpdateService.createItem(transactionCreatedEvent).log().subscribe();
         };
     }
@@ -36,7 +35,6 @@ public class WalletMaterializedViewProcessor {
             LOGGER.info("ReceivedBalance: " + event);
             BalanceUpdatedEvent balanceUpdatedEvent = new BalanceUpdatedEvent(event.getWalletId()+"-"+event.getUpdateTime(),
                     event.getTransactionAmount(), event.getWalletId(), event.getUpdateTime(), event.getBalance(), event.getBeforeBalance());
-            LOGGER.info("ReceivedBalance: " + balanceUpdatedEvent.getId());
             materializedViewUpdateService.createBalance(balanceUpdatedEvent).log().subscribe();
         };
     }
