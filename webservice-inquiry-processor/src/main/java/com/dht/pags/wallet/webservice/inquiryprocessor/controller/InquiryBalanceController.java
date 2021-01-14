@@ -53,19 +53,11 @@ public class InquiryBalanceController {
     public Flux<Balance> getItemById(@PathVariable String walletId) {
 
         CosmosPagedFlux<Balance> pagedFluxResponse =
-                cosmosContainer.queryItems("Select * from c where c.walletId IN ('"+walletId+"')", new CosmosQueryRequestOptions(), Balance.class);
-
-        return pagedFluxResponse;
-    }
-
-    @GetMapping("/balance/{walletId}")
-    public Flux<Balance> getBalanceById(@PathVariable String walletId) {
-
-        CosmosPagedFlux<Balance> pagedFluxResponse =
                 cosmosContainer.queryItems("Select * from c where c.walletId IN ('"+walletId+"') ORDER BY c.updateTime DESC OFFSET 0 LIMIT 1", new CosmosQueryRequestOptions(), Balance.class);
 
         return pagedFluxResponse;
     }
+
 
     @PostConstruct
     public void init() {
