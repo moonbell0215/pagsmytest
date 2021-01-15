@@ -33,6 +33,14 @@ public class TransactionCreatedEvent {
      */
     private final TransactionType transactionType;
     /**
+     * 交易前餘額
+     */
+    private final BigDecimal beforeBalance;
+    /**
+     * 交易後餘額
+     */
+    private final BigDecimal afterBalance;
+    /**
      * 交易說明
      */
     private final String description;
@@ -44,6 +52,8 @@ public class TransactionCreatedEvent {
                                    @JsonProperty("walletId") String walletId,
                                    @JsonProperty("transactionDateTime") long transactionDateTime,
                                    @JsonProperty("transactionType") TransactionType transactionType,
+                                   @JsonProperty("beforeBalance") BigDecimal beforeBalance,
+                                   @JsonProperty("afterBalance") BigDecimal afterBalance,
                                    @JsonProperty("description") String description) {
         this.id = id;
         this.orderId = orderId;
@@ -51,6 +61,8 @@ public class TransactionCreatedEvent {
         this.walletId = walletId;
         this.transactionDateTime = transactionDateTime;
         this.transactionType = transactionType;
+        this.beforeBalance = beforeBalance;
+        this.afterBalance = afterBalance;
         this.description = description;
     }
 
@@ -76,6 +88,14 @@ public class TransactionCreatedEvent {
         return transactionType;
     }
 
+    public BigDecimal getBeforeBalance() {
+        return beforeBalance;
+    }
+
+    public BigDecimal getAfterBalance() {
+        return afterBalance;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -89,6 +109,8 @@ public class TransactionCreatedEvent {
         sb.append(", walletId='").append(walletId).append('\'');
         sb.append(", transactionDateTime=").append(transactionDateTime);
         sb.append(", transactionType=").append(transactionType);
+        sb.append(", beforeBalance=").append(beforeBalance);
+        sb.append(", afterBalance=").append(afterBalance);
         sb.append(", description='").append(description).append('\'');
         sb.append('}');
         return sb.toString();
@@ -104,6 +126,6 @@ public class TransactionCreatedEvent {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, orderId, transactionAmount, walletId, transactionDateTime, transactionType, description);
+        return Objects.hash(id, orderId, transactionAmount, walletId, transactionDateTime, transactionType, beforeBalance, afterBalance, description);
     }
 }

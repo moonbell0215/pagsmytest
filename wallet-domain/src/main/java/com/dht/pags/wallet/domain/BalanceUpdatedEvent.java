@@ -27,7 +27,7 @@ public class BalanceUpdatedEvent {
      */
     private final BigDecimal balance;
     /**
-     * 交易餘額
+     * 交易前餘額
      */
     private final BigDecimal beforeBalance;
 
