@@ -135,35 +135,18 @@ public class WalletTransactionFunction {
 
     private TransactionCreatedEvent createTransactionEvent(CreateTransactionCommandProcessedEvent processedEvent) {
         //TODO: Implement logic
-        TransactionCreatedEventSet eventSet = getTransactionCreatedEventSetFromStateStore(processedEvent.getWalletId());
-        BigDecimal previousBalance = new BigDecimal("0");
-        BigDecimal newBalance;
-
-        if (eventSet != null) {
-            //LOGGER.info("Event Store size is " + eventSet.getpreviousBalanceEventSet().size());
-            previousBalance = eventSet.getEventSet().stream().map(TransactionCreatedEvent::getTransactionAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
-            newBalance = previousBalance.add(processedEvent.getTransactionAmount());
-
-        } else {
-            LOGGER.info("Event Store is empty, key=" + processedEvent.getWalletId());
-            newBalance = processedEvent.getTransactionAmount();
-        }
-        LOGGER.info("id = " + processedEvent.getId() + ",  Wallet:" + processedEvent.getWalletId() + " ,previousBalance:" + previousBalance + ", transactionAmount = " + processedEvent.getTransactionAmount() + ", newBalance:" + newBalance);
-
         return new TransactionCreatedEvent(processedEvent.getId(),
                 processedEvent.getOrderId(),
                 processedEvent.getTransactionAmount(),
                 processedEvent.getWalletId(),
                 processedEvent.getTransactionDateTime(),
                 processedEvent.getTransactionType(),
-                previousBalance,
-                newBalance,
                 processedEvent.getDescription()
         );
     }
 
     private BalanceUpdatedEvent createBalanceUpdatedEvent(TransactionCreatedEvent event) {
-        /*TransactionCreatedEventSet eventSet = getTransactionCreatedEventSetFromStateStore(event.getWalletId());
+        TransactionCreatedEventSet eventSet = getTransactionCreatedEventSetFromStateStore(event.getWalletId());
         BigDecimal previousBalance = new BigDecimal("0");
         BigDecimal newBalance;
 
@@ -176,14 +159,14 @@ public class WalletTransactionFunction {
             LOGGER.info("Event Store is empty, key=" + event.getWalletId());
             newBalance = event.getTransactionAmount();
         }
-        LOGGER.info("id = " + event.getId() + ",  Wallet:" + event.getWalletId() + " ,previousBalance:" + previousBalance + ", transactionAmount = " + event.getTransactionAmount() + ", newBalance:" + newBalance);*/
+        LOGGER.info("id = " + event.getId() + ",  Wallet:" + event.getWalletId() + " ,previousBalance:" + previousBalance + ", transactionAmount = " + event.getTransactionAmount() + ", newBalance:" + newBalance);
         //TODO: Implement logic
         return new BalanceUpdatedEvent(event.getId(),
                 event.getTransactionAmount(),
                 event.getWalletId(),
                 event.getTransactionDateTime(),
-                event.getAfterBalance(),
-                event.getBeforeBalance());
+                previousBalance,
+                newBalance);
     }
 
     private CreateTransactionCommandProcessedEvent createTransactionCommandProcessedEvent(CreateTransactionCommand createTransactionCommand, TransactionStatus transactionStatus) {
