@@ -77,4 +77,9 @@ public class MaterializedViewUpdateService {
         cosmosContainer = cosmosDatabase.getContainer(containerBalance);
         return cosmosContainer.createItem(item);
     }
+
+    public <T> Mono<CosmosItemResponse<T>> updateBalance(T item) {
+        cosmosContainer = cosmosDatabase.getContainer(containerBalance);
+        return cosmosContainer.upsertItem(item);
+    }
 }

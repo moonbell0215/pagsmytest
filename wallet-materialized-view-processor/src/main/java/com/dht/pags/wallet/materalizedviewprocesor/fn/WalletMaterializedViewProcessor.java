@@ -36,6 +36,9 @@ public class WalletMaterializedViewProcessor {
             BalanceUpdatedEvent balanceUpdatedEvent = new BalanceUpdatedEvent(event.getWalletId()+"-"+event.getUpdateTime(),
                     event.getTransactionAmount(), event.getWalletId(), event.getUpdateTime(), event.getBalance(), event.getBeforeBalance());
             materializedViewUpdateService.createBalance(balanceUpdatedEvent).log().subscribe();
+            balanceUpdatedEvent = new BalanceUpdatedEvent(event.getWalletId(),
+                    event.getTransactionAmount(), event.getWalletId(), event.getUpdateTime(), event.getBalance(), event.getBeforeBalance());
+            materializedViewUpdateService.updateBalance(balanceUpdatedEvent).log().subscribe();
         };
     }
 

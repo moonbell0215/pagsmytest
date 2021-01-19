@@ -1,8 +1,7 @@
 package com.dht.pags.wallet.webservice.inquiryprocessor.controller;
 
 import com.azure.cosmos.*;
-import com.azure.cosmos.models.CosmosContainerProperties;
-import com.azure.cosmos.models.CosmosQueryRequestOptions;
+import com.azure.cosmos.models.*;
 import com.azure.cosmos.util.CosmosPagedFlux;
 import com.dht.pags.wallet.webservice.inquiryprocessor.domain.Balance;
 import org.slf4j.Logger;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
@@ -49,13 +49,26 @@ public class InquiryBalanceController {
         return pagedFluxResponse;
     }
 
-    @GetMapping("/balances/{walletId}")
+    /*@GetMapping("/balances/{walletId}")
     public Flux<Balance> getItemById(@PathVariable String walletId) {
 
         CosmosPagedFlux<Balance> pagedFluxResponse =
                 cosmosContainer.queryItems("Select * from c where c.walletId IN ('"+walletId+"') ORDER BY c.updateTime DESC OFFSET 0 LIMIT 1", new CosmosQueryRequestOptions(), Balance.class);
 
         return pagedFluxResponse;
+    }*/
+
+    @GetMapping("/balances/{walletId}")
+    public Mono<Balance> getItemById(@PathVariable String walletId) {
+
+        Mono<CosmosItemResponse<Balance>> readResponse = cosmosContainer.readItem(walletId,
+                new PartitionKey(walletId),
+                new CosmosItemRequestOptions(),
+                Balance.class);
+
+        return readResponse.flatMap(itemResponse -> {
+            return Mono.just(itemResponse.getItem());
+        });
     }
 
 
