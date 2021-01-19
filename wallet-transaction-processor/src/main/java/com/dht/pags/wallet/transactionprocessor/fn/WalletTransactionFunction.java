@@ -165,8 +165,8 @@ public class WalletTransactionFunction {
                 event.getTransactionAmount(),
                 event.getWalletId(),
                 event.getTransactionDateTime(),
-                previousBalance,
-                newBalance);
+                newBalance,
+                previousBalance);
     }
 
     private CreateTransactionCommandProcessedEvent createTransactionCommandProcessedEvent(CreateTransactionCommand createTransactionCommand, TransactionStatus transactionStatus) {
