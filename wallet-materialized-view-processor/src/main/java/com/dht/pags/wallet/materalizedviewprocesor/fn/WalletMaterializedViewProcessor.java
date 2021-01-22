@@ -1,5 +1,6 @@
 package com.dht.pags.wallet.materalizedviewprocesor.fn;
 
+import com.dht.pags.wallet.domain.Balance;
 import com.dht.pags.wallet.domain.BalanceUpdatedEvent;
 import com.dht.pags.wallet.domain.TransactionCreatedEvent;
 import com.dht.pags.wallet.materalizedviewprocesor.repository.MaterializedViewUpdateService;
@@ -23,7 +24,7 @@ public class WalletMaterializedViewProcessor {
     public Consumer<TransactionCreatedEvent> walletTransactionToCosmoDbView() {
         return event -> {
             LOGGER.info("ReceivedTran: " + event);
-            TransactionCreatedEvent transactionCreatedEvent = new TransactionCreatedEvent(event.getWalletId()+"-"+event.getTransactionDateTime(),
+            TransactionCreatedEvent transactionCreatedEvent = new TransactionCreatedEvent(event.getId(),
                     event.getOrderId(), event.getTransactionAmount(), event.getWalletId(), event.getTransactionDateTime(), event.getTransactionType(), event.getDescription());
             materializedViewUpdateService.createItem(transactionCreatedEvent).log().subscribe();
         };
@@ -33,12 +34,11 @@ public class WalletMaterializedViewProcessor {
     public Consumer<BalanceUpdatedEvent> balanceUpdatedEventToCosmoDbView() {
         return event -> {
             LOGGER.info("ReceivedBalance: " + event);
-            BalanceUpdatedEvent balanceUpdatedEvent = new BalanceUpdatedEvent(event.getWalletId()+"-"+event.getUpdateTime(),
+            BalanceUpdatedEvent balanceUpdatedEvent = new BalanceUpdatedEvent(event.getId(),
                     event.getTransactionAmount(), event.getWalletId(), event.getUpdateTime(), event.getBalance(), event.getBeforeBalance());
-            materializedViewUpdateService.createBalance(balanceUpdatedEvent).log().subscribe();
-            balanceUpdatedEvent = new BalanceUpdatedEvent(event.getWalletId(),
-                    event.getTransactionAmount(), event.getWalletId(), event.getUpdateTime(), event.getBalance(), event.getBeforeBalance());
-            materializedViewUpdateService.updateBalance(balanceUpdatedEvent).log().subscribe();
+            materializedViewUpdateService.createOrderDetail(balanceUpdatedEvent).log().subscribe();
+            Balance balance = new Balance(event.getWalletId(), event.getWalletId(), event.getBalance(), event.getUpdateTime());
+            materializedViewUpdateService.updateBalance(balance).log().subscribe();
         };
     }
 

@@ -18,8 +18,11 @@ public class MaterializedViewUpdateService {
     @Value("${application.cosmosdb.database}")
     private String databaseName;
 
-    @Value("${application.cosmosdb.container}")
-    private String containerId;
+    @Value("${application.cosmosdb.transaction}")
+    private String containerTransaction;
+
+    @Value("${application.cosmosdb.orderDetail}")
+    private String containerOrderDetail;
 
     @Value("${application.cosmosdb.balance}")
     private String containerBalance;
@@ -60,7 +63,7 @@ public class MaterializedViewUpdateService {
         }
 
         if (cosmosContainer == null) {
-            CosmosContainerProperties properties = new CosmosContainerProperties(containerId, "/walletId");
+            CosmosContainerProperties properties = new CosmosContainerProperties(containerTransaction, "/walletId");
             cosmosDatabase.createContainerIfNotExists(properties);
             //cosmosContainer = cosmosDatabase.getContainer(containerId);
         }
@@ -69,12 +72,12 @@ public class MaterializedViewUpdateService {
     }
 
     public <T> Mono<CosmosItemResponse<T>> createItem(T item) {
-        cosmosContainer = cosmosDatabase.getContainer(containerId);
+        cosmosContainer = cosmosDatabase.getContainer(containerTransaction);
         return cosmosContainer.createItem(item);
     }
 
-    public <T> Mono<CosmosItemResponse<T>> createBalance(T item) {
-        cosmosContainer = cosmosDatabase.getContainer(containerBalance);
+    public <T> Mono<CosmosItemResponse<T>> createOrderDetail(T item) {
+        cosmosContainer = cosmosDatabase.getContainer(containerOrderDetail);
         return cosmosContainer.createItem(item);
     }
 
