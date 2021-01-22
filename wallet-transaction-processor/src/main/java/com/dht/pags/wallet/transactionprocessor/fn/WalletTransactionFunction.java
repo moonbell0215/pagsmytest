@@ -125,6 +125,10 @@ public class WalletTransactionFunction {
     }
 
     private boolean validateCreateTransactionCommand(CreateTransactionCommand createTransactionCommand) {
+        if(createTransactionCommand.getOperatorType() == null || "null".equals(createTransactionCommand.getOperatorType())){
+            LOGGER.info("OperatorType is null");
+            return false;
+        }
         if (!createTransactionCommand.getTransactionType().isReduce()) {
             return true;
         }
@@ -141,6 +145,7 @@ public class WalletTransactionFunction {
                 processedEvent.getWalletId(),
                 processedEvent.getTransactionDateTime(),
                 processedEvent.getTransactionType(),
+                processedEvent.getOperatorType(),
                 processedEvent.getDescription()
         );
     }
@@ -187,6 +192,7 @@ public class WalletTransactionFunction {
                 createTransactionCommand.getWalletId(),
                 System.currentTimeMillis(),
                 createTransactionCommand.getTransactionType(),
+                createTransactionCommand.getOperatorType(),
                 "Note by event:" + createTransactionCommand.getDescription(),
                 transactionStatus);
     }

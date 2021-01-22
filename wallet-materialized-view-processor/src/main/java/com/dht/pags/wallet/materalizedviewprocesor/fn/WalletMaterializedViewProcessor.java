@@ -25,7 +25,7 @@ public class WalletMaterializedViewProcessor {
         return event -> {
             LOGGER.info("ReceivedTran: " + event);
             TransactionCreatedEvent transactionCreatedEvent = new TransactionCreatedEvent(event.getId(),
-                    event.getOrderId(), event.getTransactionAmount(), event.getWalletId(), event.getTransactionDateTime(), event.getTransactionType(), event.getDescription());
+                    event.getOrderId(), event.getTransactionAmount(), event.getWalletId(), event.getTransactionDateTime(), event.getTransactionType(),event.getOperatorType(), event.getDescription());
             materializedViewUpdateService.createItem(transactionCreatedEvent).log().subscribe();
         };
     }

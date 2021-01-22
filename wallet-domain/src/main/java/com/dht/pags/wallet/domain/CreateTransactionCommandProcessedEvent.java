@@ -31,6 +31,10 @@ public class CreateTransactionCommandProcessedEvent {
      */
     private final TransactionType transactionType;
     /**
+     * 操作人員
+     */
+    private final OperatorType operatorType;
+    /**
      * 交易說明
      */
     private final String description;
@@ -46,6 +50,7 @@ public class CreateTransactionCommandProcessedEvent {
                                                   @JsonProperty("walletId") String walletId,
                                                   @JsonProperty("transactionDateTime") long transactionDateTime,
                                                   @JsonProperty("transactionType") TransactionType transactionType,
+                                                  @JsonProperty("operatorType") OperatorType operatorType,
                                                   @JsonProperty("description") String description,
                                                   @JsonProperty("transactionStatus") TransactionStatus transactionStatus) {
         this.id = id;
@@ -56,7 +61,7 @@ public class CreateTransactionCommandProcessedEvent {
         this.transactionType = transactionType;
         this.description = description;
         this.transactionStatus = transactionStatus;
-
+        this.operatorType = operatorType;
     }
 
     public String getId() {
@@ -87,18 +92,22 @@ public class CreateTransactionCommandProcessedEvent {
 
     public TransactionStatus getTransactionStatus() { return transactionStatus; }
 
+    public OperatorType getOperatorType() {
+        return operatorType;
+    }
+
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("CreateTransactionCommandProcessedEvent{");
-        sb.append("id='").append(id).append('\'');
-        sb.append(", transactionAmount=").append(transactionAmount);
-        sb.append(", orderId='").append(orderId).append('\'');
-        sb.append(", walletId='").append(walletId).append('\'');
-        sb.append(", transactionDateTime=").append(transactionDateTime);
-        sb.append(", transactionType=").append(transactionType);
-        sb.append(", description='").append(description).append('\'');
-        sb.append(", transactionStatus=").append(transactionStatus);
-        sb.append('}');
-        return sb.toString();
+        return "CreateTransactionCommandProcessedEvent{" +
+                "id='" + id + '\'' +
+                ", transactionAmount=" + transactionAmount +
+                ", orderId='" + orderId + '\'' +
+                ", walletId='" + walletId + '\'' +
+                ", transactionDateTime=" + transactionDateTime +
+                ", transactionType=" + transactionType +
+                ", operatorType=" + operatorType +
+                ", description='" + description + '\'' +
+                ", transactionStatus=" + transactionStatus +
+                '}';
     }
 }

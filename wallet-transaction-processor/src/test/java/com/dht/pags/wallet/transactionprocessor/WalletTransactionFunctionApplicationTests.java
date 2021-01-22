@@ -145,7 +145,7 @@ class WalletTransactionFunctionApplicationTests {
 			String walletId = "E000IF53";
 			String orderId = "TEST1234";
 			for (int i =1 ; i < 10 ; i++){
-				testEvent(new CreateTransactionCommand(orderId+i, new BigDecimal("100.01"),walletId,TransactionType.DEPOSIT,"TEST DEPOSIT"));
+				testEvent(new CreateTransactionCommand(orderId+i, new BigDecimal("100.01"),walletId,TransactionType.DEPOSIT,OperatorType.API_THIRD_PARTY_PAYMENT,"TEST DEPOSIT"));
 			}//跑9次 查log , balance=900.09
 		}
 	}

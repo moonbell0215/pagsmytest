@@ -33,6 +33,11 @@ public class TransactionCreatedEvent {
      */
     private final TransactionType transactionType;
     /**
+     * 操作人員
+     */
+    private final OperatorType operatorType;
+
+    /**
      * 交易說明
      */
     private final String description;
@@ -44,6 +49,7 @@ public class TransactionCreatedEvent {
                                    @JsonProperty("walletId") String walletId,
                                    @JsonProperty("transactionDateTime") long transactionDateTime,
                                    @JsonProperty("transactionType") TransactionType transactionType,
+                                   @JsonProperty("operatorType") OperatorType operatorType,
                                    @JsonProperty("description") String description) {
         this.id = id;
         this.orderId = orderId;
@@ -51,6 +57,7 @@ public class TransactionCreatedEvent {
         this.walletId = walletId;
         this.transactionDateTime = transactionDateTime;
         this.transactionType = transactionType;
+        this.operatorType = operatorType;
         this.description = description;
     }
 
@@ -80,18 +87,22 @@ public class TransactionCreatedEvent {
         return description;
     }
 
+    public OperatorType getOperatorType() {
+        return operatorType;
+    }
+
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("TransactionCreatedEvent{");
-        sb.append("id='").append(id).append('\'');
-        sb.append(", orderId='").append(orderId).append('\'');
-        sb.append(", transactionAmount=").append(transactionAmount);
-        sb.append(", walletId='").append(walletId).append('\'');
-        sb.append(", transactionDateTime=").append(transactionDateTime);
-        sb.append(", transactionType=").append(transactionType);
-        sb.append(", description='").append(description).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "TransactionCreatedEvent{" +
+                "id='" + id + '\'' +
+                ", orderId='" + orderId + '\'' +
+                ", transactionAmount=" + transactionAmount +
+                ", walletId='" + walletId + '\'' +
+                ", transactionDateTime=" + transactionDateTime +
+                ", transactionType=" + transactionType +
+                ", operatorType=" + operatorType +
+                ", description='" + description + '\'' +
+                '}';
     }
 
     @Override

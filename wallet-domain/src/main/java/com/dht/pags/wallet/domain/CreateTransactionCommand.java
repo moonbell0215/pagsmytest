@@ -23,9 +23,16 @@ public class CreateTransactionCommand {
      */
     private final TransactionType transactionType;
     /**
+     * 操作人員
+     */
+    private final OperatorType operatorType;
+    /**
      * 交易說明
      */
     private final String description;
+
+
+
     //TODO-再討論要傳入參數，以上是目前想到必要的參數值
 
     @JsonCreator
@@ -33,7 +40,9 @@ public class CreateTransactionCommand {
                                     @JsonProperty("orderAmount") BigDecimal orderAmount,
                                     @JsonProperty("walletId") String walletId,
                                     @JsonProperty("transactionType") TransactionType transactionType,
-                                    @JsonProperty("description") String description) {
+                                    @JsonProperty("operatorType") OperatorType operatorType,
+                                    @JsonProperty("description") String description
+                                    ) {
         this.orderId = orderId;
         this.walletId = walletId;
         this.transactionType = transactionType;
@@ -46,6 +55,7 @@ public class CreateTransactionCommand {
             this.orderAmount = orderAmount.abs();
         }
         this.description = description;
+        this.operatorType = operatorType;
     }
 
     public String getOrderId() {
@@ -66,15 +76,19 @@ public class CreateTransactionCommand {
 
     public String getDescription() { return description; }
 
+    public OperatorType getOperatorType() {
+        return operatorType;
+    }
+
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("CreateTransactionCommand{");
-        sb.append("orderId='").append(orderId).append('\'');
-        sb.append(", orderAmount=").append(orderAmount);
-        sb.append(", walletId='").append(walletId).append('\'');
-        sb.append(", transactionType=").append(transactionType);
-        sb.append(", description='").append(description).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "CreateTransactionCommand{" +
+                "orderId='" + orderId + '\'' +
+                ", orderAmount=" + orderAmount +
+                ", walletId='" + walletId + '\'' +
+                ", transactionType=" + transactionType +
+                ", description='" + description + '\'' +
+                ", operatorType=" + operatorType +
+                '}';
     }
 }
