@@ -51,6 +51,12 @@ public class InquiryBalanceController {
         return cosmosContainer.queryItems("Select * from c where c.id = '"+walletId+"'", new CosmosQueryRequestOptions(), Balance.class);
     }
 
+    @GetMapping("/teambalances/{walletIds}")
+    public Flux<Balance> getTeamBalanceTotalById(@PathVariable String walletIds) {
+
+        return cosmosContainer.queryItems("Select sum(c.balance) as balance from c where c.id in ('"+walletIds+"')", new CosmosQueryRequestOptions(), Balance.class);
+    }
+
     @PostConstruct
     public void init() {
         this.getContainerCreateResourcesIfNotExist();
