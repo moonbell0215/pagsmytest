@@ -7,15 +7,14 @@ import com.dht.pags.wallet.webservice.inquiryprocessor.domain.Balance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
+import java.util.Map;
 
 @Service
 @RestController
@@ -51,9 +50,9 @@ public class InquiryBalanceController {
         return cosmosContainer.queryItems("Select * from c where c.id = '"+walletId+"'", new CosmosQueryRequestOptions(), Balance.class);
     }
 
-    @GetMapping("/teambalances/{walletIds}")
-    public Flux<Balance> getTeamBalanceTotalById(@PathVariable String walletIds) {
-
+    @PostMapping("/teambalances/")
+    public Flux<Balance> getTeamBalanceTotalById(@RequestBody Map<String, Object> entity) {
+        String walletIds = entity.get("employeecode").toString();
         return cosmosContainer.queryItems("Select sum(c.balance) as balance from c where c.id in ('"+walletIds+"')", new CosmosQueryRequestOptions(), Balance.class);
     }
 
