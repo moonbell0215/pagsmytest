@@ -38,7 +38,7 @@ public class InquiryBalanceController {
     private CosmosAsyncDatabase cosmosDatabase;
     private CosmosAsyncContainer cosmosContainer;
 
-    @GetMapping("/balances")
+    @GetMapping("/balan")
     public Flux<Balance> getAllItems() {
 
         return cosmosContainer.queryItems("Select * from c", new CosmosQueryRequestOptions(), Balance.class);
@@ -50,7 +50,7 @@ public class InquiryBalanceController {
         return cosmosContainer.queryItems("Select * from c where c.id = '"+walletId+"'", new CosmosQueryRequestOptions(), Balance.class);
     }
 
-    @PostMapping("/teambalances/")
+    @PostMapping("/teambalances")
     public Flux<Balance> getTeamBalanceTotalById(@RequestBody Map<String, Object> entity) {
         String walletIds = entity.get("employeecode").toString();
         return cosmosContainer.queryItems("Select sum(c.balance) as balance from c where c.id in ('"+walletIds+"')", new CosmosQueryRequestOptions(), Balance.class);
