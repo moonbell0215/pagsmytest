@@ -38,7 +38,7 @@ public class InquiryBalanceController {
     private CosmosAsyncDatabase cosmosDatabase;
     private CosmosAsyncContainer cosmosContainer;
 
-    @GetMapping("/balan")
+    @GetMapping("/balances")
     public Flux<Balance> getAllItems() {
 
         return cosmosContainer.queryItems("Select * from c", new CosmosQueryRequestOptions(), Balance.class);
