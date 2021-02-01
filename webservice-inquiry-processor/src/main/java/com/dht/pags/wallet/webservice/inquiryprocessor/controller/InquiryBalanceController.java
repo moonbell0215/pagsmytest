@@ -38,11 +38,11 @@ public class InquiryBalanceController {
     private CosmosAsyncDatabase cosmosDatabase;
     private CosmosAsyncContainer cosmosContainer;
 
-    @GetMapping("/balances")
+    /*@GetMapping("/balances")
     public Flux<Balance> getAllItems() {
 
         return cosmosContainer.queryItems("Select * from c", new CosmosQueryRequestOptions(), Balance.class);
-    }
+    }*/
 
     @GetMapping("/balances/{walletId}")
     public Flux<Balance> getItemById(@PathVariable String walletId) {
@@ -50,7 +50,7 @@ public class InquiryBalanceController {
         return cosmosContainer.queryItems("Select * from c where c.id = '"+walletId+"'", new CosmosQueryRequestOptions(), Balance.class);
     }
 
-    @PostMapping("/teambalances")
+    @PostMapping("/balances")
     public Flux<Balance> getTeamBalanceTotalById(@RequestBody Map<String, Object> entity) {
         String walletIds = entity.get("employeecode").toString();
         return cosmosContainer.queryItems("Select sum(c.balance) as balance from c where c.id in ('"+walletIds+"')", new CosmosQueryRequestOptions(), Balance.class);
