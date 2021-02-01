@@ -12,7 +12,7 @@ public class Transaction {
     private Long transactionDatetime;
     private BigDecimal transactionAmount;
     private String currency;
-    private int transactionType;
+    private String transactionType;
 
     public String getOrderId() {
         return orderId;
@@ -62,11 +62,11 @@ public class Transaction {
         this.currency = currency;
     }
 
-    public int getTransactionType() {
+    public String getTransactionType() {
         return transactionType;
     }
 
-    public void setTransactionType(int transactionType) {
+    public void setTransactionType(String transactionType) {
         this.transactionType = transactionType;
     }
 }
