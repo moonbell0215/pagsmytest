@@ -18,3 +18,8 @@ spec:
               servicePort: 8080
             path: /wallets/balances/
             pathType: Prefix
+          - backend:
+              serviceName: webserviceinquiryprocessor
+              servicePort: 8080
+            path: /wallets/teambalances/
+            pathType: Prefix
