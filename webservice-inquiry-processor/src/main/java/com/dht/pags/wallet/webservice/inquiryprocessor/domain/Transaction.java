@@ -9,7 +9,7 @@ public class Transaction {
     private String orderId;
     private String walletId;
     private String paymentTypeCode;
-    private Long transactionDatetime;
+    private Long transactionDateTime;
     private BigDecimal transactionAmount;
     private String currency;
     private String transactionType;
@@ -39,12 +39,12 @@ public class Transaction {
         this.paymentTypeCode = paymentTypeCode;
     }
 
-    public Long getTransactionDatetime() {
-        return transactionDatetime;
+    public Long getTransactionDateTime() {
+        return transactionDateTime;
     }
 
-    public void setTransactionDatetime(Long transactionDatetime) {
-        this.transactionDatetime = transactionDatetime;
+    public void setTransactionDateTime(Long transactionDateTime) {
+        this.transactionDateTime = transactionDateTime;
     }
 
     public BigDecimal getTransactionAmount() {
