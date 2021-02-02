@@ -13,6 +13,7 @@ public class Transaction {
     private BigDecimal transactionAmount;
     private String currency;
     private String transactionType;
+    private String description;
 
     public String getOrderId() {
         return orderId;
@@ -68,5 +69,13 @@ public class Transaction {
 
     public void setTransactionType(String transactionType) {
         this.transactionType = transactionType;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
