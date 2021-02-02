@@ -8,10 +8,9 @@ public class Transaction {
 
     private String orderId;
     private String walletId;
-    private String paymentTypeCode;
     private Long transactionDateTime;
     private BigDecimal transactionAmount;
-    private String currency;
+    private String operatorType;
     private String transactionType;
     private String description;
 
@@ -31,14 +30,6 @@ public class Transaction {
         this.walletId = walletId;
     }
 
-    public String getPaymentTypeCode() {
-        return paymentTypeCode;
-    }
-
-    public void setPaymentTypeCode(String paymentTypeCode) {
-        this.paymentTypeCode = paymentTypeCode;
-    }
-
     public Long getTransactionDateTime() {
         return transactionDateTime;
     }
@@ -55,12 +46,12 @@ public class Transaction {
         this.transactionAmount = transactionAmount;
     }
 
-    public String getCurrency() {
-        return currency;
+    public String getOperatorType() {
+        return operatorType;
     }
 
-    public void setCurrency(String currency) {
-        this.currency = currency;
+    public void setOperatorType(String operatorType) {
+        this.operatorType = operatorType;
     }
 
     public String getTransactionType() {

@@ -4,7 +4,7 @@ import com.azure.cosmos.*;
 import com.azure.cosmos.models.CosmosContainerProperties;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.util.CosmosPagedFlux;
-import com.dht.pags.wallet.webservice.inquiryprocessor.domain.Transaction;
+import com.dht.pags.wallet.domain.TransactionCreatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,19 +41,19 @@ public class InquiryTransactionController {
     private CosmosAsyncContainer cosmosContainer;
 
     @GetMapping("/transactions")
-    public Flux<Transaction> getAllItems() {
+    public Flux<TransactionCreatedEvent> getAllItems() {
 
-        CosmosPagedFlux<Transaction> pagedFluxResponse =
-                cosmosContainer.queryItems("Select * from c", new CosmosQueryRequestOptions(), Transaction.class);
+        CosmosPagedFlux<TransactionCreatedEvent> pagedFluxResponse =
+                cosmosContainer.queryItems("Select * from c", new CosmosQueryRequestOptions(), TransactionCreatedEvent.class);
 
         return pagedFluxResponse;
     }
 
     @GetMapping("/transactions/{walletId}")
-    public Flux<Transaction> getItemById(@PathVariable String walletId) {
+    public Flux<TransactionCreatedEvent> getItemById(@PathVariable String walletId) {
 
-        CosmosPagedFlux<Transaction> pagedFluxResponse =
-                cosmosContainer.queryItems("Select * from c where c.walletId IN ('"+walletId+"')", new CosmosQueryRequestOptions(), Transaction.class);
+        CosmosPagedFlux<TransactionCreatedEvent> pagedFluxResponse =
+                cosmosContainer.queryItems("Select * from c where c.walletId IN ('"+walletId+"')", new CosmosQueryRequestOptions(), TransactionCreatedEvent.class);
 
         return pagedFluxResponse;
     }
