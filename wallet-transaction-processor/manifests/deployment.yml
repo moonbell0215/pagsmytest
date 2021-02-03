@@ -15,10 +15,10 @@ spec:
       containers:
         - name: wallettransactionprocessor 
           image: dhtpags.azurecr.io/wallettransactionprocessor
-          env:
-            - name: TZ
-              value: Asia/Shanghai
           envFrom:
             - configMapRef:
                 name: pags-common
+          env:
+            - name: TZ
+              value: Asia/Shanghai
       restartPolicy: Always
