@@ -10,8 +10,8 @@ ENV APPLICATIONINSIGHTS_ROLE_NAME=wallet-transaction-processor
 
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-RUN apt update
-RUN apt install -y tzdata
+RUN apt-get update
+RUN apt-get install -y tzdata
 
 
 RUN curl -L https://github.com/microsoft/ApplicationInsights-Java/releases/download/3.0.0/applicationinsights-agent-3.0.0.jar -o /app/applicationinsights-agent-3.0.0.jar
