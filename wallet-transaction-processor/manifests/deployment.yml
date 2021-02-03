@@ -18,4 +18,7 @@ spec:
           envFrom:
             - configMapRef:
                 name: pags-common
+          env:
+            - name: TZ
+              value: Asia/Shanghai
       restartPolicy: Always
