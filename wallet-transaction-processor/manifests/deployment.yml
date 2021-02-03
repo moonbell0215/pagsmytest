@@ -7,6 +7,9 @@ spec:
   selector:
     matchLabels:
       app: wallettransactionprocessor
+      env:
+        - name: TZ
+      value: Asia/Shanghai
   template:
     metadata:
       labels:
