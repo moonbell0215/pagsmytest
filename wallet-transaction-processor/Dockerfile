@@ -10,7 +10,7 @@ ENV APPLICATIONINSIGHTS_ROLE_NAME=wallet-transaction-processor
 
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-RUN ll /usr/share/zoneinfo
+RUN ls /usr/share/zoneinfo
 
 
 
