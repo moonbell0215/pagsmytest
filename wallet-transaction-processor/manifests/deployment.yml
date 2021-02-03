@@ -7,9 +7,6 @@ spec:
   selector:
     matchLabels:
       app: wallettransactionprocessor
-      env:
-        - name: TZ
-      value: Asia/Shanghai
   template:
     metadata:
       labels:
@@ -18,6 +15,9 @@ spec:
       containers:
         - name: wallettransactionprocessor 
           image: dhtpags.azurecr.io/wallettransactionprocessor
+          env:
+            - name: TZ
+              value: Asia/Shanghai
           envFrom:
             - configMapRef:
                 name: pags-common
