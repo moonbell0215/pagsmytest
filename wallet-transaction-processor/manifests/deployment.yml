@@ -21,4 +21,11 @@ spec:
           env:
             - name: TZ
               value: Asia/Shanghai
+          volumeMounts:
+            - name: tz-config
+              mountPath: /etc/localtime
+      volumes:
+        - name: tz-config
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
       restartPolicy: Always
