@@ -41,6 +41,14 @@ public enum TransactionType {
      * 派彩
      */
     PAYOUT(false),
+    /**
+     * 派彩加钱--重新結算
+     */
+    RE_PAYOUT_ADD(false),
+    /**
+     * 派彩扣钱--重新結算
+     */
+    RE_PAYOUT(true),
     ;
 
     private final boolean isReduce;
