@@ -40,7 +40,7 @@ public enum TransactionType {
     /**
      * 派彩
      */
-    PAYOUT(true),
+    PAYOUT(false),
     ;
 
     private final boolean isReduce;
