@@ -13,6 +13,10 @@ public enum OperatorType {
      */
     API_BET,
     /**
+     * 前台 API Payout
+     */
+    API_PAYOUT,
+    /**
      * //前台 第三方支付 Third-party payment
      */
     API_THIRD_PARTY_PAYMENT,
