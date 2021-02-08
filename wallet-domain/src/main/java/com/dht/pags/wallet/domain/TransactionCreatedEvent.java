@@ -110,11 +110,18 @@ public class TransactionCreatedEvent {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TransactionCreatedEvent that = (TransactionCreatedEvent) o;
-        return that.transactionAmount.compareTo(transactionAmount) == 0 && transactionDateTime == that.transactionDateTime && Objects.equals(id, that.id) && Objects.equals(orderId, that.orderId) && Objects.equals(walletId, that.walletId) && transactionType == that.transactionType && description.equals(that.description);
+        return that.transactionAmount.compareTo(transactionAmount) == 0
+                && transactionDateTime == that.transactionDateTime
+                && Objects.equals(id, that.id)
+                && Objects.equals(orderId, that.orderId)
+                && Objects.equals(walletId, that.walletId)
+                && transactionType == that.transactionType
+                && operatorType == that.operatorType
+                && description.equals(that.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, orderId, transactionAmount, walletId, transactionDateTime, transactionType, description);
+        return Objects.hash(id, orderId, transactionAmount, walletId, transactionDateTime, transactionType,operatorType, description);
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class BalanceUpdatedEvent {
     /**
@@ -66,6 +67,19 @@ public class BalanceUpdatedEvent {
     public BigDecimal getBeforeBalance() { return beforeBalance; }
 
     public long getUpdateTime() { return updateTime; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BalanceUpdatedEvent that = (BalanceUpdatedEvent) o;
+        return updateTime == that.updateTime && Objects.equals(id, that.id) && Objects.equals(transactionAmount, that.transactionAmount) && Objects.equals(walletId, that.walletId) && Objects.equals(balance, that.balance) && Objects.equals(beforeBalance, that.beforeBalance);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, transactionAmount, walletId, updateTime, balance, beforeBalance);
+    }
 
     @Override
     public String toString() {
