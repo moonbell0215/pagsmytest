@@ -18,7 +18,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.support.serializer.JsonSerde;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
@@ -190,10 +189,16 @@ public class WalletTransactionFunction {
                 createTransactionCommand.getOrderAmount(),
                 createTransactionCommand.getOrderId(),
                 createTransactionCommand.getWalletId(),
-                System.currentTimeMillis(),
+//                System.currentTimeMillis(),
+                dateTransformBetweenTimeZone(Calendar.getInstance().getTime(), TimeZone.getTimeZone("UTC+0"), TimeZone.getTimeZone("UTC+8")),
                 createTransactionCommand.getTransactionType(),
                 createTransactionCommand.getOperatorType(),
                 "Note by event:" + createTransactionCommand.getDescription(),
                 transactionStatus);
     }
+    public static long dateTransformBetweenTimeZone(Date sourceDate, TimeZone sourceTimeZone, TimeZone targetTimeZone) {
+        return sourceDate.getTime() - sourceTimeZone.getRawOffset() + targetTimeZone.getRawOffset();
+    }
+
+
 }
