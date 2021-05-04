@@ -1,0 +1,21 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: walletmaterializedviewrecordchecker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: walletmaterializedviewrecordchecker
+  template:
+    metadata:
+      labels:
+        app: walletmaterializedviewrecordchecker
+    spec:
+      containers:
+        - name: walletmaterializedviewrecordchecker
+          image: dhtpags.azurecr.io/walletmaterializedviewrecordchecker
+          envFrom:
+            - configMapRef:
+                name: pags-common
+      restartPolicy: Always
