@@ -4,5 +4,5 @@ include ':wallet-materialized-view-processor'
 include ':wallet-transaction-processor'
 include ':webservice-dispatcher'
 include ':webservice-inquiry-processor'
-include 'wallet-materialized-view-record-checker'
+include ':wallet-materialized-view-record-checker'
 
