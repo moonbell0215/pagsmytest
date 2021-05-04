@@ -15,6 +15,7 @@ trigger:
       - wallet-transaction-processor
       - wallet-materialized-view-processor
       - webservice-inquiry-processor
+      - wallet-materialized-view-record-checker
 
 
 resources:

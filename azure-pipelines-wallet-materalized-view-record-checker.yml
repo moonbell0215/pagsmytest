@@ -11,6 +11,11 @@ trigger:
     include:
       - wallet-materialized-view-record-checker
       - wallet-domain
+    exclude:
+      - wallet-materialized-view-processor
+      - wallet-transaction-processor
+      - webservice-dispatcher
+      - webservice-inquiry-processor
 
 resources:
 - repo: self
