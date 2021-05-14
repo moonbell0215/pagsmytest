@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: walletmaterializedviewprocessor 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: walletmaterializedviewprocessor
+  template:
+    metadata:
+      labels:
+        app: walletmaterializedviewprocessor 
+    spec:
+      containers:
+        - name: walletmaterializedviewprocessor 
+          image: mayortestpags01.azurecr.io/walletmaterializedviewprocessor
+          ports:
+          - containerPort: 8080
