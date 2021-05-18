@@ -64,7 +64,7 @@ stages:
     displayName: Deploy
     pool:
       vmImage: $(vmImageName)
-    environment: 'moonbell0215pagsmytest.walletmaterializedviewprocessor'
+    environment: 'moonbell0215pagsmytest.default'
     strategy:
       runOnce:
         deploy:
