@@ -4,12 +4,6 @@ metadata:
   name: walletmaterializedviewprocessor 
 spec:
   replicas: 1
-  progressDeadlineSeconds: 900
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 0
-      maxSurge: 1
   selector:
     matchLabels:
       app: walletmaterializedviewprocessor
@@ -20,7 +14,7 @@ spec:
     spec:
       containers:
         - name: walletmaterializedviewprocessor 
-          image: mayortestpags01.azurecr.io/walletmaterializedviewprocessor
+          image: dhtpags.azurecr.io/walletmaterializedviewprocessor
           envFrom:
             - configMapRef:
                 name: pags-common
