@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: walletmaterializedviewprocessor 
-          image: dhtpags.azurecr.io/walletmaterializedviewprocessor
+          image: mayortestpags01.azurecr.io/walletmaterializedviewprocessor
           envFrom:
             - configMapRef:
                 name: pags-common
