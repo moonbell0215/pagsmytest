@@ -3,7 +3,18 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- main
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - wallet-materialized-view-processor
+      - wallet-domain
+    exclude:
+      - wallet-transaction-processor
+      - webservice-dispatcher
+      - webservice-inquiry-processor
+      - wallet-materialized-view-record-checker
 
 resources:
 - repo: self
