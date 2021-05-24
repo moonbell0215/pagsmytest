@@ -12,7 +12,7 @@ variables:
 
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: '6e44cf52-94fd-4993-aa44-5f05ac4efd2e'
-  imageRepository: 'walletmateralizedviewrecordchecker'
+  imageRepository: 'walletmaterializedviewrecordchecker'
   containerRegistry: 'mayortestpags01.azurecr.io'
   dockerfilePath: '**/wallet-materialized-view-record-checker/Dockerfile'
   tag: '$(Build.BuildId)'
