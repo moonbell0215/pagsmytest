@@ -36,7 +36,7 @@ stages:
     - task: Gradle@2
       inputs:
         gradleWrapperFile: 'gradlew'
-        tasks: 'azure-pipelines-wallet-materalized-view-record-checker:build'
+        tasks: 'wallet-materalized-view-record-checker:build'
         publishJUnitResults: false
         javaHomeOption: 'JDKVersion'
         sonarQubeRunAnalysis: false
