@@ -50,8 +50,9 @@ stages:
         tags: |
           $(tag)
 
-    - upload: manifests
+    - publish: wallet-materialized-view-record-checker/manifests
       artifact: manifests
+      displayName: wallet-materialized-view-record-checker k8s manifests
 
 - stage: Deploy
   displayName: Deploy stage
